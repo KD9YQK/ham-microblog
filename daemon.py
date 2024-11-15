@@ -54,7 +54,7 @@ class JS8modem:
         self.js8call.callback.register_command(' NEWS?', self.cb_news_cmd)
         self.js8call.callback.register_incoming(self.cb_test)
         self.js8call.callback.register_spots(new_spots)
-
+        self.js8call.js8call.app.terminate_js8call = False
         print("* Js8Call Modem Initialized.")
         print(f"* Host: {host} * Port: {port}")
 

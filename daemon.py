@@ -59,12 +59,6 @@ class JS8modem:
         self.js8call.callback.register_incoming(self.cb_test)
         self.js8call.callback.register_spots(new_spots)
         
-        # set spot monitor callback
-        self.js8call.callback.spots = new_spots
-        # set station watcher callback
-        self.js8call.callback.station_spot = station_spotted
-        # set group watcher callback
-        self.js8call.callback.group_spot = group_spotted
         
         print("* Js8Call Modem Initialized.")
         print(f"* Host: {host} * Port: {port}")

@@ -54,7 +54,7 @@ class JS8modem:
         self.js8call.callback.register_command(' NEWS?', self.cb_news_cmd)
         self.js8call.callback.register_incoming(self.cb_test)
         self.js8call.callback.register_spots(new_spots)
-        self.js8call.js8call.app.terminate_js8call = False
+        
         print("* Js8Call Modem Initialized.")
         print(f"* Host: {host} * Port: {port}")
 
@@ -102,5 +102,10 @@ if __name__ == '__main__':
     #    modem.js8call.send_message(f"TEST {numVal[str(0)]} {shrink_timecode(ta)} {shrink_timecode(tb)} {shrink_timecode(tc)}")
 
     # Main Loop
-    while modem.js8call.online:
-        pass
+    try:
+        while modem.js8call.online:
+            pass
+    except KeyboardInterrupt:
+        print("Bye")
+        modem.js8call.stop(False)
+        exit()

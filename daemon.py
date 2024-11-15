@@ -79,11 +79,12 @@ class JS8modem:
                 msg.text in (None, '')  # message text is empty
         ):
             return
-        # read the latest news from file
-        blog = db_functions.get_my_blog()
-        message = f" NEWS {len(blog)}"
+        # collect recent posts and format to faster string format
+        blog = db_functions.get_callsign_blog(self.js8call.settings.get_station_callsign())
+        message = f"NEWS {numVal[str(len(blog))]}"
         for post in blog:
-            message += f" {post['time']}"
+            t = int(post['time'])
+            message += f" {shrink_timecode(t)}"
 
 
         # respond to origin station with directed message

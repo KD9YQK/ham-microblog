@@ -3,16 +3,6 @@ import db_functions
 import time
 
 
-class timeValues:
-    hour = 60  # Seconds
-    day = hour * 24
-    week = day * 7
-    fortnight = day * 14
-    month = week * 4
-    year = month * 12
-    decade = year * 10
-
-
 numVal = {'1':'A','2':'B','3':'C','4':'D','5':'E','6':'F','7':'G','8':'H','9':'I','0':'J'}
 abcVal = {'A':'1','B':'2','C':'3','D':'4','E':'5','F':'6','G':'7','H':'8','I':'9','J':'0'}
 

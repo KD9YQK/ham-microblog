@@ -12,7 +12,6 @@ def build_db():
     con, cur = get_db()
     cur.execute("DROP TABLE IF EXISTS blog")
 
-    cur.execute(table)
     # Creating table blog
     table = """ CREATE TABLE blog (
                     time INT NOT NULL,
@@ -26,7 +25,7 @@ def build_db():
 
 
 def get_callsign_blog(callsign: str, num: int = 3):
-    purge_expired__blog()
+    purge_expired_blog()
     con, cur = get_db()
     if num == 0:
         rows = cur.execute('''SELECT time, message FROM blog WHERE callsign = ? ORDER BY time DESC''',
@@ -74,7 +73,8 @@ def get_db() -> tuple[sqlite3.Connection, sqlite3.Cursor]:
 
 if __name__ == "__main__":
     build_db()
-    add_blog(get_time(),"KD9YQK","My Message")
+    add_blog(get_time(), "KD9YQK","Test Blog 1")
+    add_blog(get_time()-100, "KD9YQK", "Test Blog 2")
+    add_blog(get_time()-200, "KD9YQK", "Test Blog 3")
     blog = get_callsign_blog("KD9YQK", 0)
     print(str(blog))
-

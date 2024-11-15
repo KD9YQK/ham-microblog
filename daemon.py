@@ -86,8 +86,8 @@ if __name__ == '__main__':
         #exit()
     modem.start()
 
-    #print("sending")
-    #modem.js8call.send_message(f"TEST {numVal[str(0)]} {shrink_timecode(1111111111)} {shrink_timecode(1111111111)} {shrink_timecode(1111111111)}")
+    print("sending")
+    modem.js8call.send_message(f"TEST {numVal[str(0)]} {shrink_timecode(1111111111)} {shrink_timecode(1111111111)} {shrink_timecode(1111111111)}")
     
     # Main Loop
     while True:

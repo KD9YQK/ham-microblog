@@ -40,18 +40,15 @@ def expand_timecode(timecode:str):
         tmp += abcVal[l]
     return int(tmp)
 
-# callback function for all new spots
+# callback for new spots
 def new_spots(spots):
     for spot in spots:
-        print('Spotted {} with a {}db SNR'.format(spot.origin, spot.snr))
-    
-# callback function for watched station spots
-def station_spotted(spot):
-    print('{} spotted!'.format(spot.origin))
+        if spot.grid in (None, ''):
+            grid = ' '
+        else:
+            grid = ' (' + spot.grid + ') '
 
-# callback function for watched group spots
-def group_spotted(spot):
-    print('{} spotted!'.format(spot.destination))
+        print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, grid, spot.offset, time.strftime('%x %X', time.localtime(spot.timestamp))))
 
 class JS8modem:
     js8call: pyjs8call.Client
@@ -59,6 +56,8 @@ class JS8modem:
     def __init__(self, host='127.0.0.1', port=2442):
         self.js8call = pyjs8call.Client(host=host, port=port)
         self.js8call.callback.register_command(' NEWS?', self.cb_news_cmd)
+        self.js8call.callback.register_incoming(self.cb_test)
+        self.js8call.callback.register_spots(new_spots)
         
         # set spot monitor callback
         self.js8call.callback.spots = new_spots
@@ -75,9 +74,8 @@ class JS8modem:
         self.js8call.inbox.enable()
 
     # Custom Callbacks
-    def cb_test(self, msgs):
-        for msg in msgs:
-            print(f"{msg.origin} - {msg.text}")
+    def cb_test(self, msg):
+        print(f"{msg.origin} - {msg.text}")
 
     def cb_news_cmd(self, msg):
         # do not respond in the following cases:
@@ -115,6 +113,6 @@ if __name__ == '__main__':
 #    modem.js8call.send_message(f"TEST {numVal[str(0)]} {shrink_timecode(ta)} {shrink_timecode(tb)} {shrink_timecode(tc)}")
     
     # Main Loop
-    while True:
+    while modem.js8call.online:
         pass
 

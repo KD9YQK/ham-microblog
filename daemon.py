@@ -101,11 +101,6 @@ if __name__ == '__main__':
     #    print("sending")
     #    modem.js8call.send_message(f"TEST {numVal[str(0)]} {shrink_timecode(ta)} {shrink_timecode(tb)} {shrink_timecode(tc)}")
 
-    # Main Loop
-    try:
-        while modem.js8call.online:
-            pass
-    except KeyboardInterrupt:
-        print("Bye")
-        modem.js8call.stop(terminate_js8call=False)
-        exit()
+    # Main Forever
+    while modem.js8call.online:
+        pass

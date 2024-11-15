@@ -54,7 +54,7 @@ class JS8modem:
         self.js8call.callback.register_command(' NEWS?', self.cb_news_cmd)
         self.js8call.callback.register_incoming(self.cb_test)
         self.js8call.callback.register_spots(new_spots)
-        
+
         print("* Js8Call Modem Initialized.")
         print(f"* Host: {host} * Port: {port}")
 
@@ -107,5 +107,5 @@ if __name__ == '__main__':
             pass
     except KeyboardInterrupt:
         print("Bye")
-        modem.js8call.stop(False)
+        modem.js8call.stop(terminate_js8call=False)
         exit()

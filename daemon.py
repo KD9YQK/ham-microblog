@@ -3,8 +3,10 @@ import db_functions
 import time
 
 # Numbers transmit slow then letters in JS8Call.
-numVal = {'1': 'A', '2': 'B', '3': 'C', '4': 'D', '5': 'E', '6': 'F', '7': 'G', '8': 'H', '9': 'I', '0': 'J'}  # Convert Numbers to Letters
-abcVal = {'A': '1', 'B': '2', 'C': '3', 'D': '4', 'E': '5', 'F': '6', 'G': '7', 'H': '8', 'I': '9', 'J': '0'}  # Convert Letters back to Numbers
+numVal = {'1': 'A', '2': 'B', '3': 'C', '4': 'D', '5': 'E', '6': 'F', '7': 'G', '8': 'H', '9': 'I',
+          '0': 'J'}  # Convert Numbers to Letters
+abcVal = {'A': '1', 'B': '2', 'C': '3', 'D': '4', 'E': '5', 'F': '6', 'G': '7', 'H': '8', 'I': '9',
+          'J': '0'}  # Convert Letters back to Numbers
 
 
 def num_to_abc(num: int):  # Convert an integer to a string of Letters
@@ -57,17 +59,16 @@ class JS8modem:
     def cb_test(self, msg):  # Test callback when any msg is received
         print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
 
-    def cb_new_spots(spots):  # Callback when a new spot is received.
+    def cb_new_spots(self, spots):  # Callback when a new spot is received.
         for spot in spots:
             if spot.grid in (None, ''):
                 grid = ' '
             else:
                 grid = ' (' + spot.grid + ') '
-    
+
             print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, grid, spot.offset,
                                                         time.strftime('%x %X', time.localtime(spot.timestamp))))
 
-    
     def cb_news_cmd(self, msg):  # Callback when the NEWS? command is received
         # do not respond in the following cases:
         if (
@@ -88,13 +89,15 @@ class JS8modem:
 
 
 if __name__ == '__main__':
+    modem: JS8modem
     try:
         modem = JS8modem()
-    except RuntimeError:
-        print("ERROR - JS8Call application not installed")
-        # exit()
-    modem.start()
+        modem.start()
 
-    # Loop Forever
-    while modem.js8call.online:
-        pass
+        # Loop Forever
+        while modem.js8call.online:
+            pass
+        
+    except RuntimeError:
+        print("ERROR - JS8Call application not installed or connection issue")
+        exit()

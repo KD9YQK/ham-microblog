@@ -49,7 +49,7 @@ def get_callsign_blog(callsign: str, num: int = 3):
 def add_blog(mtime: int, call: str, msg: str):
     purge_expired_blog()
     con, cur = get_db()
-    cur.execute('''INSERT INTO blog (time, callsign, message) VALUES (?, ?, ?, ?)''',
+    cur.execute('''INSERT INTO blog (time, callsign, message) VALUES (?, ?, ?)''',
                 (mtime, call, msg,))
     con.commit()
     con.close()

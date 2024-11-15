@@ -80,19 +80,19 @@ class JS8modem:
 
 if __name__ == '__main__':
     try:
-        modem = JS8modem(host="192.168.1.103", port=2442)
+        modem = JS8modem()
     except RuntimeError:
         print("ERROR - JS8Call application not installed")
         #exit()
     modem.start()
-    ta = int(time.time())
-    time.sleep(1)
-    tb = int(time.time())
-    time.sleep(1)
-    tc = int(time.time())
+#    ta = int(time.time())
+#    time.sleep(1)
+#    tb = int(time.time())
+#    time.sleep(1)
+#    tc = int(time.time())
 
-    print("sending")
-    modem.js8call.send_message(f"TEST {numVal[str(0)]} {shrink_timecode(ta)} {shrink_timecode(tb)} {shrink_timecode(tc)}")
+#    print("sending")
+#    modem.js8call.send_message(f"TEST {numVal[str(0)]} {shrink_timecode(ta)} {shrink_timecode(tb)} {shrink_timecode(tc)}")
     
     # Main Loop
     while True:

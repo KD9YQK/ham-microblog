@@ -40,13 +40,33 @@ def expand_timecode(timecode:str):
         tmp += abcVal[l]
     return int(tmp)
 
+# callback function for all new spots
+def new_spots(spots):
+    for spot in spots:
+        print('Spotted {} with a {}db SNR'.format(spot.origin, spot.snr))
+    
+# callback function for watched station spots
+def station_spotted(spot):
+    print('{} spotted!'.format(spot.origin))
+
+# callback function for watched group spots
+def group_spotted(spot):
+    print('{} spotted!'.format(spot.destination))
+
 class JS8modem:
     js8call: pyjs8call.Client
 
     def __init__(self, host='127.0.0.1', port=2442):
         self.js8call = pyjs8call.Client(host=host, port=port)
         self.js8call.callback.register_command(' NEWS?', self.cb_news_cmd)
-        self.js8call.callback.register_incoming(self.cb_test, pyjs8call.Message.RX_ACTIVITY)
+        
+        # set spot monitor callback
+        self.js8call.callback.spots = new_spots
+        # set station watcher callback
+        self.js8call.callback.station_spot = station_spotted
+        # set group watcher callback
+        self.js8call.callback.group_spot = group_spotted
+        
         print("* Js8Call Modem Initialized.")
         print(f"* Host: {host} * Port: {port}")
 

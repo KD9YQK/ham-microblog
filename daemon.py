@@ -88,6 +88,8 @@ if __name__ == '__main__':
 
     #print("sending")
     #modem.js8call.send_message(f"TEST {numVal[str(0)]} {shrink_timecode(1111111111)} {shrink_timecode(1111111111)} {shrink_timecode(1111111111)}")
-    #while True:
-    #    pass
+    
+    # Main Loop
+    while True:
+        pass
 

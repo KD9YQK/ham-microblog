@@ -13,7 +13,7 @@ The web front-end is fleshed out and near fully functional. Need to interface wi
 git clone https://github.com/KD9YQK/js8-microblog.git
 python -m venv js8-microblog
 cd js8-microblog
-bin/pip install pyjs8call
+bin/pip install pyjs8call flask
 ```
 ## Run Once to build DB
 `bin/python db_functions.py`

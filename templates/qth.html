@@ -1,0 +1,43 @@
+{% extends 'index.html' %}
+
+{% block body %}
+
+<br>
+<h1>{{ title }}</h1>
+<br>
+<div class="post-container">
+
+    <div class="post">
+
+        <div class="post-feed" style="background-color:lightgrey;"><p>
+            <form method="post" id="addpost-form">
+                <input type="text" name="addpost" id="addpost" style="width:100%; padding-bottom: 100px;" placeholder="Write a new post.."><br>
+                <button type="submit" style="float: right; margin-top:8px;">Create</button>
+            </form>
+        </div>
+    </div>
+
+{% for post in blog %}
+
+    <div class="post">
+        <div class="post-header">
+            {% if post['mon'] == False %}
+                <form method="post" id="addmon-form" class="add_{{ post['callsign'] }}">
+                    <input type="hidden" value="{{ post['callsign'] }}" name="addmon" id="addmon">
+                    <button type="submit" class="post-addmonbtn"></button>
+                </form>
+                <img class="del_{{ post['callsign'] }}" src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px" style="display:none; ">
+            {% else %}
+                <img src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px">
+            {% endif %}
+        <strong><a href="/callsign/{{ post['callsign'] }}"> {{ post['callsign'] }} </a></strong>
+        </div>
+        <div class="post-feed"><p>{{ post['msg'] }}</p></div>
+        <div class="post-detail"><small>{{ post['gmt'] }}</small></div>
+    </div>
+
+{% endfor %}
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS8 Microblog : Home Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+          integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+          crossorigin="anonymous"></script>
+
+      <script type="text/javascript">
+        $(document).on('submit','#addmon-form',function(e){
+          e.preventDefault();
+          $.ajax({
+            type:'POST',
+            url:'/addmon',
+            data:{addmon:$("#addmon").val()},
+            success:function(){
+              alert('Added ' + $("#addmon").val() + ' to the monitoring list');
+              $('.add_' + $("#addmon").val()).hide()
+              $('.del_' + $("#addmon").val()).show()
+            }
+          })
+        });
+        $(document).on('submit','#delmon-form',function(e){
+          e.preventDefault();
+          $.ajax({
+            type:'POST',
+            url:'/delmon',
+            data:{delmon:$("#delmon").val()},
+            success:function(){
+              alert('Removed ' + $("#delmon").val() + ' from the monitoring list');
+              $('.del_' + $("#delmon").val()).hide()
+              $('.add_' + $("#delmon").val()).show()
+            }
+          })
+        });
+      </script>
+
+</head>
+<body>
+<div class="header">
+  <h1>JS8 Microblog</h1>
+  <p>A radio powered social media project</p>
+</div>
+<div class="topnav">
+    <a href="/">Main</a>
+    <a href="/monitoring">Monitoring</a>
+    <a href="/qth">{{ call }}</a>
+    <div class="search-container">
+        <form action="/" method="post">
+          <input type="text" placeholder="Search.." name="callsign">
+          <button type="submit">Submit</button>
+        </form>
+    </div>
+  {# <a href="#about" class="split">About</a> #}
+</div>
+
+{% block body %}
+
+<br>
+<h1>{{ title }}</h1>
+<br>
+<div class="post-container">
+{% if blog | length < 1 %}
+    <p>No records found.</p>
+{% endif %}
+{% for post in blog %}
+    <script type="text/javascript">
+        $(document).on('submit','#{{ post['callsign'] }}{{ post['time'] }}-form',function(e){
+          e.preventDefault();
+          $.ajax({
+            type:'POST',
+            url:'/addmon',
+            data:{addmon:$("#addmon{{ post['callsign'] }}{{ post['time'] }}").val()},
+            success:function(){
+              alert('Added ' + $("#addmon{{ post['callsign'] }}{{ post['time'] }}").val() + ' to the monitoring list');
+              $('.add_' + $("#addmon{{ post['callsign'] }}{{ post['time'] }}").val()).hide()
+              $('.del_' + $("#addmon{{ post['callsign'] }}{{ post['time'] }}").val()).show()
+            }
+          })
+        });
+    </script>
+    <div class="post">
+        <div class="post-header">
+            {% if post['mon'] == False %}
+                <form method="post" id="{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}">
+                    <input type="hidden" value="{{ post['callsign'] }}" name="addmon{{ post['callsign'] }}{{ post['time'] }}" id="addmon{{ post['callsign'] }}{{ post['time'] }}">
+                    <button type="submit" class="post-addmonbtn"></button>
+                </form>
+                <img class="del_{{ post['callsign'] }}" src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px" style="display:none; ">
+            {% else %}
+                <img src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px">
+            {% endif %}
+        <strong><a href="/callsign/{{ post['callsign'] }}"> {{ post['callsign'] }} </a></strong>
+        </div>
+        <div class="post-feed"><p>{{ post['msg'] }}</p></div>
+        <div class="post-detail"><small>{{ post['gmt'] }}</small></div>
+    </div>
+
+{% endfor %}
+</div>
+
+{% endblock %}
+
+<div class="footer">
+        <p>2024 - Created by KD9YQK</p>
+</div>
+
+</body>
+</html>

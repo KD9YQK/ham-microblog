@@ -11,5 +11,10 @@ bin/pip install pyjs8call
 ## Run Once to build DB
 `bin/python db_functions.py`
 
-## Run Daemon
+## Run JS8Call Modem Daemon
 `bin/python daemon.py`
+
+## Run Web Frontend
+`bin/python webview.py`
+
+Direct browser to http://localhost:5000

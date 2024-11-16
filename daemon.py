@@ -2,6 +2,11 @@ import pyjs8call
 import db_functions
 import time
 
+
+class cmd:  # Commands. Note the space.
+    GET_POSTS = ' POSTS?'
+    POST = ' POST'
+
 # Numbers transmit slow then letters in JS8Call.
 numVal = {'1': 'A', '2': 'B', '3': 'C', '4': 'D', '5': 'E', '6': 'F', '7': 'G', '8': 'H', '9': 'I',
           '0': 'J'}  # Convert Numbers to Letters
@@ -26,12 +31,12 @@ def abc_to_num(abc: str):  # Convert a string of Letters Back to Numbers
 
 def shrink_timecode(timecode: int):  # Strip the first 5 digits of a timecode. Used to make TX smaller
     tmp = num_to_abc(timecode)
-    return tmp[-5:]
+    return tmp[-6:]
 
 
 def expand_timecode(timecode: str):  # Return the first 5 digits and return a timecode number
     t = int(time.time())
-    tmp = str(t)[:5]
+    tmp = str(t)[:4]
     for l in timecode:
         tmp += abcVal[l]
     return int(tmp)
@@ -42,8 +47,9 @@ class JS8modem:
 
     def __init__(self, host='127.0.0.1', port=2442):
         self.js8call = pyjs8call.Client(host=host, port=port)
-        self.js8call.callback.register_command(' NEWS?', self.cb_news_cmd)
-        self.js8call.callback.register_incoming(self.cb_test)
+        self.js8call.callback.register_command(cmd.GET_POSTS, self.cb_get_posts)
+        self.js8call.callback.register_command(cmd.POST, self.cb_rcv_post)
+        self.js8call.callback.register_incoming(self.cb_incoming)
         self.js8call.callback.register_spots(self.cb_new_spots)
 
         print("* Js8Call Modem Initialized.")
@@ -56,7 +62,7 @@ class JS8modem:
     ###########################################
     # Custom Callbacks
     ###########################################
-    def cb_test(self, msg):  # Test callback when any msg is received
+    def cb_incoming(self, msg):  # Test callback when any msg is received
         print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
 
     def cb_new_spots(self, spots):  # Callback when a new spot is received.
@@ -69,7 +75,7 @@ class JS8modem:
             print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, grid, spot.offset,
                                                         time.strftime('%x %X', time.localtime(spot.timestamp))))
 
-    def cb_news_cmd(self, msg):  # Callback when the NEWS? command is received
+    def cb_get_posts(self, msg):  # Callback when the POSTS? command is received
         # do not respond in the following cases:
         if (
                 self.js8call.settings.autoreply_confirmation_enabled() or
@@ -79,13 +85,24 @@ class JS8modem:
             return
         # collect recent posts and format to faster string format
         blog = db_functions.get_callsign_blog(self.js8call.settings.get_station_callsign())
-        message = f"NEWS {numVal[str(len(blog))]}"
+        message = f"POSTS {numVal[str(len(blog))]}"
         for post in blog:
             t = int(post['time'])
+            message += f" {shrink_timecode(t)}"
             message += f" {shrink_timecode(t)}"
 
         # respond to origin station with directed message
         self.js8call.send_directed_message(msg.origin, message)
+
+    def cb_rcv_post(self, msg):
+        # do not respond in the following cases:
+        if (
+                self.js8call.settings.autoreply_confirmation_enabled() or
+                msg.text in (None, '')  # message text is empty
+        ):
+            return
+        tmp = msg.text.split('POST ')[1].split(' ', maxsplit=2)
+        db_functions.add_blog(expand_timecode(tmp[0]), msg.origin, tmp[1])
 
 
 if __name__ == '__main__':
@@ -97,7 +114,7 @@ if __name__ == '__main__':
         # Loop Forever
         while modem.js8call.online:
             pass
-        
+
     except RuntimeError:
         print("ERROR - JS8Call application not installed or connection issue")
         exit()

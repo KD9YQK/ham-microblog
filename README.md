@@ -21,7 +21,7 @@ THIS PROJECT IS A WIP AND NOT FULLY DEVELOPED!
 ```
 git clone https://github.com/KD9YQK/js8-microblog.git
 python -m venv js8-microblog
-cd js8-microblog
+cd ham-microblog
 bin/pip install pyjs8call flask aprs3 ax253 kiss3
 ```
 ## Run Once to build DB and fill in initial settings

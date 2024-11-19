@@ -19,7 +19,7 @@ THIS PROJECT IS A WIP AND NOT FULLY DEVELOPED!
 
 ## Install
 ```
-git clone https://github.com/KD9YQK/js8-microblog.git
+git clone https://github.com/KD9YQK/ham-microblog.git
 python -m venv js8-microblog
 cd ham-microblog
 bin/pip install pyjs8call flask aprs3 ax253 kiss3

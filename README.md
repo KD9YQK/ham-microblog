@@ -72,13 +72,13 @@ The web frontend currently uses Flask, and due to it's 'blocking' nature, cannot
 Windows
 
 ```
-venv/Scripts/python3 daemon.py
+venv/Scripts/python3 webview.py
 ```
 
 Linux
 
 ```
-bin/python3 daemon.py
+bin/python3 webview.py
 ```
 
 Direct browser to http://localhost:5000

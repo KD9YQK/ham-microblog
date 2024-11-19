@@ -1,16 +1,15 @@
-import time
 import db_functions
 import js8Modem
 import tcpModem
 import asyncio
 import json
 import threading
-import webview
+
 
 class Daemon:
     tcpmodem: tcpModem.ClientProtocol
     js8modem: js8Modem.JS8modem
-    settings:dict
+    settings: dict
 
     def process_outgoing(self):
         msgs = db_functions.get_outgoing_posts()
@@ -21,14 +20,15 @@ class Daemon:
                 self.tcpmodem.send_msg(json.dumps(m).encode())
 
     def start_tcpmodem(self, host='157.230.203.194', port=8888):
+        loop: asyncio.AbstractEventLoop = asyncio.AbstractEventLoop()
         try:
             loop = asyncio.get_event_loop()
             coro = loop.create_connection(tcpModem.ClientProtocol, host=host, port=port)
             _server = loop.run_until_complete(coro)
             self.tcpmodem = tcpModem.clients[0]
 
-            #data = {"type": tcpModem.types.GET_ALL_MSGS, "value": {"callsign": "KD9YQK"}}
-            #self.tcpmodem.send_msg(json.dumps(data).encode())
+            # data = {"type": tcpModem.types.GET_ALL_MSGS, "value": {"callsign": "KD9YQK"}}
+            # self.tcpmodem.send_msg(json.dumps(data).encode())
         except ConnectionRefusedError:
             print("TCP/IP ERROR - Unable to connect to TCP Server")
             return
@@ -36,7 +36,6 @@ class Daemon:
             exit()
         try:
             loop.run_forever()
-            #loop.run_forever()
         except KeyboardInterrupt:
             exit()
 
@@ -44,7 +43,7 @@ class Daemon:
         try:
             self.js8modem = js8Modem.JS8modem(host=host, port=port)
             self.js8modem.start()
-            #while self.js8modem.js8call.online:
+            # while self.js8modem.js8call.online:
             #    pass
         except RuntimeError:
             print("JS8Call ERROR - JS8Call application not installed or connection issue")
@@ -71,9 +70,7 @@ if __name__ == "__main__":
     if settings['aprsmodem']:
         pass
 
-    #for t in threads:
+    # for t in threads:
     #    t.start()
-    #for t in threads:
+    # for t in threads:
     #    t.join()
-    #webview.app.run()
-

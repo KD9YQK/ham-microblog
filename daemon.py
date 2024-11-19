@@ -1,120 +1,74 @@
-import pyjs8call
 import db_functions
-import time
+import js8Modem
+import tcpModem
+import asyncio
+import json
+import threading
+import webview
 
+class Daemon:
+    tcpmodem: tcpModem.ClientProtocol
+    js8modem: js8Modem.JS8modem
+    settings:dict
 
-class cmd:  # Commands. Note the space.
-    GET_POSTS = ' POSTS?'
-    POST = ' POST'
+    def process_outgoing(self):
+        msgs = db_functions.get_outgoing_posts()
+        for m in msgs:
+            if self.settings['js8modem']:
+                self.js8modem.broadcast_post(m)
+            if self.settings['tcpmodem']:
+                self.tcpmodem.send_msg(json.dumps(m).encode())
 
-# Numbers transmit slow then letters in JS8Call.
-numVal = {'1': 'A', '2': 'B', '3': 'C', '4': 'D', '5': 'E', '6': 'F', '7': 'G', '8': 'H', '9': 'I',
-          '0': 'J'}  # Convert Numbers to Letters
-abcVal = {'A': '1', 'B': '2', 'C': '3', 'D': '4', 'E': '5', 'F': '6', 'G': '7', 'H': '8', 'I': '9',
-          'J': '0'}  # Convert Letters back to Numbers
+    def start_tcpmodem(self, host='127.0.0.1', port=8888):
+        try:
+            loop = asyncio.get_event_loop()
+            coro = loop.create_connection(tcpModem.ClientProtocol, host=host, port=port)
+            _server = loop.run_until_complete(coro)
+            self.tcpmodem = tcpModem.clients[0]
 
-
-def num_to_abc(num: int):  # Convert an integer to a string of Letters
-    tmp = str(num)
-    retval = ''
-    for l in tmp:
-        retval += numVal[l]
-    return retval
-
-
-def abc_to_num(abc: str):  # Convert a string of Letters Back to Numbers
-    tmp = ''
-    for l in abc:
-        tmp += abcVal[l]
-    return int(tmp)
-
-
-def shrink_timecode(timecode: int):  # Strip the first 5 digits of a timecode. Used to make TX smaller
-    tmp = num_to_abc(timecode)
-    return tmp[-6:]
-
-
-def expand_timecode(timecode: str):  # Return the first 5 digits and return a timecode number
-    t = int(time.time())
-    tmp = str(t)[:4]
-    for l in timecode:
-        tmp += abcVal[l]
-    return int(tmp)
-
-
-class JS8modem:
-    js8call: pyjs8call.Client
-
-    def __init__(self, host='127.0.0.1', port=2442):
-        self.js8call = pyjs8call.Client(host=host, port=port)
-        self.js8call.callback.register_command(cmd.GET_POSTS, self.cb_get_posts)
-        self.js8call.callback.register_command(cmd.POST, self.cb_rcv_post)
-        self.js8call.callback.register_incoming(self.cb_incoming)
-        self.js8call.callback.register_spots(self.cb_new_spots)
-
-        print("* Js8Call Modem Initialized.")
-        print(f"* Host: {host} * Port: {port}")
-
-    def start(self):
-        self.js8call.start()
-        self.js8call.inbox.enable()
-
-    ###########################################
-    # Custom Callbacks
-    ###########################################
-    def cb_incoming(self, msg):  # Test callback when any msg is received
-        print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
-
-    def cb_new_spots(self, spots):  # Callback when a new spot is received.
-        for spot in spots:
-            if spot.grid in (None, ''):
-                grid = ' '
-            else:
-                grid = ' (' + spot.grid + ') '
-
-            print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, grid, spot.offset,
-                                                        time.strftime('%x %X', time.localtime(spot.timestamp))))
-
-    def cb_get_posts(self, msg):  # Callback when the POSTS? command is received
-        # do not respond in the following cases:
-        if (
-                self.js8call.settings.autoreply_confirmation_enabled() or
-                not self.js8call.msg_is_to_me(msg) or  # not directed to local station or configured group
-                msg.text in (None, '')  # message text is empty
-        ):
+            #data = {"type": tcpModem.types.GET_ALL_MSGS, "value": {"callsign": "KD9YQK"}}
+            #self.tcpmodem.send_msg(json.dumps(data).encode())
+        except ConnectionRefusedError:
+            print("TCP/IP ERROR - Unable to connect to TCP Server")
             return
-        # collect recent posts and format to faster string format
-        blog = db_functions.get_callsign_blog(self.js8call.settings.get_station_callsign())
-        message = f"POSTS {numVal[str(len(blog))]}"
-        for post in blog:
-            t = int(post['time'])
-            message += f" {shrink_timecode(t)}"
-            message += f" {shrink_timecode(t)}"
+        except KeyboardInterrupt:
+            exit()
+        #try:
+        #    loop.run_forever()
+        #except KeyboardInterrupt:
+        #    exit()
 
-        # respond to origin station with directed message
-        self.js8call.send_directed_message(msg.origin, message)
-
-    def cb_rcv_post(self, msg):
-        # do not respond in the following cases:
-        if (
-                self.js8call.settings.autoreply_confirmation_enabled() or
-                msg.text in (None, '')  # message text is empty
-        ):
+    def start_js8modem(self, host='127.0.0.1', port=2442):
+        try:
+            self.js8modem = js8Modem.JS8modem(host=host, port=port)
+            self.js8modem.start()
+            while self.js8modem.js8call.online:
+                pass
+        except RuntimeError:
+            print("JS8Call ERROR - JS8Call application not installed or connection issue")
             return
-        tmp = msg.text.split('POST ')[1].split(' ', maxsplit=2)
-        db_functions.add_blog(expand_timecode(tmp[0]), msg.origin, tmp[1])
+        except KeyboardInterrupt:
+            exit()
 
 
-if __name__ == '__main__':
-    modem: JS8modem
-    try:
-        modem = JS8modem()
-        modem.start()
+if __name__ == "__main__":
+    settings = db_functions.get_settings()
+    daemon = Daemon()
+    daemon.settings = settings
+    # Web Frontend Thread
+    threads = [threading.Thread(
+        target=lambda: webview.app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False))]
+    # TCP Modem Thread
+    if settings['tcpmodem']:
+        threads.append(threading.Thread(target=daemon.start_tcpmodem(), args=()))
+    # APRS Modem Thread
+    if settings['aprsmodem']:
+        pass
+    # JS8Call Modem Thread
+    if settings['js8modem']:
+        threads.append(threading.Thread(target=daemon.start_js8modem(), args=()))
 
-        # Loop Forever
-        while modem.js8call.online:
-            pass
-
-    except RuntimeError:
-        print("ERROR - JS8Call application not installed or connection issue")
-        exit()
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()

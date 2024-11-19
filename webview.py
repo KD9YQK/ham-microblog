@@ -41,7 +41,7 @@ def qth():
     settings = db_functions.get_settings()
     owncall = settings['callsign']
     timezone = settings['timezone']
-    if request.method == 'POST':  # A search was used
+    if request.method == 'POST':
         msg = request.form.get('newmsg').upper()
         t = int(time.time())
         db_functions.add_blog(t, owncall, msg)
@@ -74,6 +74,10 @@ def addmon():
 def delmon():
     db_functions.remove_monitoring(request.form.get('delmon'))
     return "nothing"
+
+
+def start_flask_app():
+    app.run()
 
 
 if __name__ == "__main__":

@@ -70,7 +70,7 @@ class ClientProtocol(asyncio.Protocol):
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    coro = loop.create_connection(ClientProtocol, host="127.0.0.1", port=8888)
+    coro = loop.create_connection(ClientProtocol, host="157.230.203.194", port=8888)
     server = loop.run_until_complete(coro)
 
     try:

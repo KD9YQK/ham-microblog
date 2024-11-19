@@ -45,9 +45,9 @@ if __name__ == '__main__':
     db_functions.build_db()
     db_functions.set_settings(callsign.upper(), j, a, t, tm)
     print('Setup Complete')
-    
+
     exit()
-    
+
     t = db_functions.get_time()
     db_functions.add_blog(t, "KD9YQK",
              "Today a man knocked on my door and asked for a small donation towards the local swimming pool. I gave him a glass of water.")

@@ -109,7 +109,7 @@ class JS8modem:
 if __name__ == '__main__':
     modem: JS8modem
     try:
-        modem = JS8modem()
+        modem = JS8modem(host='127.0.0.1', port=2442)
         modem.start()
 
         # Loop Forever

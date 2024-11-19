@@ -73,7 +73,7 @@ def get_outgoing_posts():
 def add_outgoing_post(mtime: int, callsign: str, msg: str):
     purge_expired_blog()
     con, cur = get_db()
-    cur.execute('''INSERT INTO blog (time, callsign, message) VALUES (?, ?, ?)''', (mtime, callsign, msg,))
+    cur.execute('''INSERT INTO outgoing (time, callsign, message) VALUES (?, ?, ?)''', (mtime, callsign, msg,))
     con.commit()
     con.close()
 
@@ -187,6 +187,7 @@ def add_blog(mtime: int, callsign: str, msg: str):
     count = 0
     for _r in rows:
         count += 1
+    print(count)
     if count == 0:
         cur.execute('''INSERT INTO blog (time, callsign, message) VALUES (?, ?, ?)''',
                     (mtime, callsign, msg,))

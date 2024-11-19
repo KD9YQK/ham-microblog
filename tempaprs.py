@@ -33,11 +33,12 @@ def msg_respond(frame):
                     msg = {
                         'src': radio.MYCALL,
                         'dest': "ADZ666", #ADZ666
-                        'info': f':{frm["sender"]}:   ack{count}'
+                        'info': f':{pad_callsign(frm["sender"])}:ack{count}'
                     }
                     radio.tx_buffer.append(msg)
         else:
-            radio.kiss_protocol.write(Frame.from_str(frame))
+            pass
+            # radio.kiss_protocol.write(Frame.from_str(frame))
 
 
 def rx_message(frame: Frame):

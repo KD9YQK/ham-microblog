@@ -68,7 +68,7 @@ class JS8modem:
         # do not respond in the following cases:
         if (
                 self.js8call.settings.autoreply_confirmation_enabled() or
-                not self.js8call.msg_is_to_me(msg) or  # not directed to local station or configured group
+                (not self.js8call.msg_is_to_me(msg) or not msg.is_directed_to('@BLOG')) or  # not directed to local station or configured group
                 msg.text in (None, '')  # message text is empty
         ):
             return
@@ -76,10 +76,11 @@ class JS8modem:
         blog = db_functions.get_callsign_blog(self.js8call.settings.get_station_callsign(), 1)
         if len(blog) < 1:
             return
-        message = f"POST {num_to_abc(blog[0]['time'])} {blog[0]['msg']}"
+        message = f"{num_to_abc(blog[0]['time'])} {blog[0]['msg']}"
 
         # respond to origin station with directed message
-        self.js8call.send_directed_message(msg.origin, message)
+        self.js8call.send_directed_command_message(msg.origin, cmd.POST, message)
+        # self.js8call.send_directed_message(msg.origin, message)
 
     def cb_rcv_post(self, msg):
         _t = self.is_running
@@ -91,7 +92,8 @@ class JS8modem:
         db_functions.add_blog(abc_to_num(t), msg.origin, msg)
 
     def broadcast_post(self, post: dict, dest='@BLOG'):
-        self.js8call.send_directed_message(dest, message=f"POST {num_to_abc(post['time'])} {post['msg']}")
+        message = f"{num_to_abc(post['time'])} {post['msg']}"
+        self.js8call.send_directed_command_message(dest, cmd.POST, message)
 
 
 if __name__ == '__main__':

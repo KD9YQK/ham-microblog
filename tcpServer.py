@@ -18,6 +18,7 @@ class ServerProtocol(asyncio.Protocol):
         clients.append(self)
 
     def data_received(self, data):
+        print(data.decode())
         # For manual telnet.
         if data == b'\r\n':
             return
@@ -60,7 +61,6 @@ class ServerProtocol(asyncio.Protocol):
                 b.pop('local', None)
                 b.pop('mon', None)
             retval = {"type": types.GET_ALL_MSGS, "value": blog}
-            print(blog)
             self.send_self(json.dumps(retval).encode())
         else:
             retval = {"type": types.ERROR, "value": "UnknownType"}

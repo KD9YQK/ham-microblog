@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JS8 Microblog : Home Page</title>
+    <title>Ham Microblog : Home Page</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://code.jquery.com/jquery-3.5.1.js"
           integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
@@ -42,7 +42,7 @@
 </head>
 <body>
 <div class="header">
-  <h1>JS8 Microblog</h1>
+  <h1>Ham Microblog</h1>
   <p>A radio powered social media project</p>
 </div>
 <div class="topnav">
@@ -97,7 +97,7 @@
         <strong><a href="/callsign/{{ post['callsign'] }}"> {{ post['callsign'] }} </a></strong>
         </div>
         <div class="post-feed"><p>{{ post['msg'] }}</p></div>
-        <div class="post-detail"><small>{{ post['gmt'] }}</small></div>
+        <div class="post-detail"><small>{{ post[timezone] }}</small></div>
     </div>
 
 {% endfor %}

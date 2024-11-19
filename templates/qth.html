@@ -10,8 +10,8 @@
     <div class="post">
 
         <div class="post-feed" style="background-color:lightgrey;"><p>
-            <form method="post" id="addpost-form">
-                <input type="text" name="addpost" id="addpost" style="width:100%; padding-bottom: 100px;" placeholder="Write a new post.."><br>
+            <form method="post" id="addpost-form" action="/qth">
+                <input type="text" name="newmsg" id="addpost" style="width:100%; padding-bottom: 100px;" placeholder="Write a new post.."><br>
                 <button type="submit" style="float: right; margin-top:8px;">Create</button>
             </form>
         </div>
@@ -33,7 +33,7 @@
         <strong><a href="/callsign/{{ post['callsign'] }}"> {{ post['callsign'] }} </a></strong>
         </div>
         <div class="post-feed"><p>{{ post['msg'] }}</p></div>
-        <div class="post-detail"><small>{{ post['gmt'] }}</small></div>
+        <div class="post-detail"><small>{{ post[timezone] }}</small></div>
     </div>
 
 {% endfor %}

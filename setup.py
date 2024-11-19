@@ -46,7 +46,7 @@ if __name__ == '__main__':
     db_functions.set_settings(callsign.upper(), j, a, t, tm)
     print('Setup Complete')
     
-    return
+    exit()
     
     t = db_functions.get_time()
     db_functions.add_blog(t, "KD9YQK",

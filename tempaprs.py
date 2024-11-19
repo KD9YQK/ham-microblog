@@ -32,7 +32,7 @@ def msg_respond(frame):
                     count = frm['info'].split('{')[1]
                     msg = {
                         'src': radio.MYCALL,
-                        'dest': "ADZ666", #ADZ666
+                        'dest': "ADZ666",  # ADZ666
                         'info': f':{pad_callsign(frm["sender"])}:ack{count}'
                     }
                     radio.tx_buffer.append(msg)
@@ -57,19 +57,19 @@ async def ainput(prompt: str) -> str:
 
 async def main_loop():
     _rec, _tx, _ig, _pos = await radio.setup(rx_callback=rx_message, igrx_callback=ig_message)
-    timer = 580
+
     c = False
     while True:
         await asyncio.sleep(10)
         cmd_input = 'msg;wxbot;tonight 60506'
-        #cmd_input = await ainput("Command>>")
+        # cmd_input = await ainput("Command>>")
         cmd = cmd_input.split(';')
         if not c:
             try:
                 if cmd[0] == 'msg':
                     msg = {
                         'src': radio.MYCALL,
-                        'dest': "ADZ666", #ADZ666
+                        'dest': "ADZ666",  # ADZ666
                         'info': f':{pad_callsign(cmd[1].upper())}:{cmd[2]}' + ' {1'
                     }
                     radio.tx_buffer.append(msg)
@@ -80,13 +80,14 @@ async def main_loop():
                     print('Usage: msg CALLSIGN message')
 
 
-def pad_callsign(callsign:str):
-    pad = 9-len(callsign)
+def pad_callsign(callsign: str):
+    pad = 9 - len(callsign)
     retval = callsign
-    for n in range(0,pad):
+    for n in range(0, pad):
         retval += ' '
     print(f'*{retval}*')
     return retval
+
 
 if __name__ == "__main__":
     # Init the radio variable.

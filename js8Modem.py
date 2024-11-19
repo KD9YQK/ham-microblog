@@ -65,16 +65,16 @@ class JS8modem:
     ###########################################
     def cb_incoming(self, msg):  # Test callback when any msg is received
         pass
-        #print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
+        # print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
 
     def cb_new_spots(self, spots):  # Callback when a new spot is received.
         for spot in spots:
             if spot.grid in (None, ''):
-                grid = ' '
+                _grid = ' '
             else:
-                grid = ' (' + spot.grid + ') '
+                _grid = ' (' + spot.grid + ') '
 
-            #print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, grid, spot.offset,
+            # print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, grid, spot.offset,
             #                                            time.strftime('%x %X', time.localtime(spot.timestamp))))
 
     def cb_get_posts(self, msg):  # Callback when the POSTS? command is received
@@ -96,13 +96,13 @@ class JS8modem:
 
     def cb_rcv_post(self, msg):
         # do not respond in the following cases:
-        if (msg.text in (None, '')):  # message text is empty
+        if msg.text in (None, ''):  # message text is empty
             return
         t = msg.text.split('POST ')[1].split(' ')[0]
         msg = msg.text.split('POST ')[1].split(f'{t} ')[1]
         db_functions.add_blog(expand_timecode(t), msg.origin, msg)
 
-    def broadcast_post(self, post: dict, dest = '@BLOG'):
+    def broadcast_post(self, post: dict, dest='@BLOG'):
         self.js8call.send_directed_message(dest, message=f"POST {shrink_timecode(post['time'])} {post['msg']}")
 
 

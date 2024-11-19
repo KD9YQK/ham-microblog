@@ -1,6 +1,5 @@
 import db_functions
 
-
 if __name__ == '__main__':
     print()
     print('What is your callsign?')
@@ -50,15 +49,17 @@ if __name__ == '__main__':
 
     t = db_functions.get_time()
     db_functions.add_blog(t, "KD9YQK",
-             "Today a man knocked on my door and asked for a small donation towards the local swimming pool. I gave him a glass of water.")
-    db_functions.add_blog(t - 100, "KD9YQK", "Ham and Eggs: A day's work for a chicken, a lifetime commitment for a pig.")
+                          "Today a man knocked on my door and asked for a small donation towards the local swimming "
+                          "pool. I gave him a glass of water.")
+    db_functions.add_blog(t - 100, "KD9YQK",
+                          "Ham and Eggs: A day's work for a chicken, a lifetime commitment for a pig.")
     db_functions.add_blog(t - 150, "KD9UEG",
-             "What do you call a dog with no legs? Doesn't matter what you call him, he's not coming.")
+                          "What do you call a dog with no legs? Doesn't matter what you call him, he's not coming.")
     db_functions.add_blog(t - 1150, "KD9UEG", "Always identify who to blame in an emergency.")
     db_functions.add_blog(t - 140, "KM6LYW",
-             "My wife just found out I replaced our bed with a trampoline; she hit the roof.")
+                          "My wife just found out I replaced our bed with a trampoline; she hit the roof.")
     db_functions.add_blog(t - 340, "KM6LYW",
-             "Smoking will kill you... Bacon will kill you... But, smoking bacon will cure it.")
+                          "Smoking will kill you... Bacon will kill you... But, smoking bacon will cure it.")
     db_functions.add_blog(t - 1250, "KD9YQK", "A liberal is just a conservative that hasn't been mugged yet.")
     l = []
     for i in range(0, 5000):

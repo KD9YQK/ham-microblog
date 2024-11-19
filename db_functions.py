@@ -265,8 +265,8 @@ def get_own_callsign():
     con, cur = get_db()
     row = cur.execute('''SELECT callsign FROM settings WHERE id = ?''', (0,))
     call = ""
-    for i in row:
-        call = i[0]
+    for _i in row:
+        call = _i[0]
 
     con.close()
     return call
@@ -283,12 +283,12 @@ def set_settings(callsign: str, js8modem=False, aprsmodem=False, tcpmodem=False,
 def get_tcp_last():
     con, cur = get_db()
     row = cur.execute('''SELECT tcplast FROM settings WHERE id = ?''', (0,))
-    t = ""
-    for i in row:
-        t = i[0]
+    _t = ""
+    for r in row:
+        _t = r[0]
 
     con.close()
-    return t
+    return _t
 
 
 def set_tcp_last():

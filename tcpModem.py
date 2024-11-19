@@ -23,7 +23,7 @@ class ClientProtocol(asyncio.Protocol):
         print("TCP/IP connection_made: {}".format(self.peername))
         clients.append(self)
         s = db_functions.get_settings()
-        msg = {'type':types.GET_ALL_MSGS, 'value': {'time':s['tcplast']}}
+        msg = {'type': types.GET_ALL_MSGS, 'value': {'time': s['tcplast']}}
         self.send_msg(json.dumps(msg).encode())
 
     def data_received(self, data):

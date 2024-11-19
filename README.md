@@ -20,9 +20,9 @@ THIS PROJECT IS A WIP AND NOT FULLY DEVELOPED!
 ## Install
 ```
 git clone https://github.com/KD9YQK/ham-microblog.git
-python -m venv js8-microblog
+python3 -m venv ham-microblog
 cd ham-microblog
-bin/pip install pyjs8call flask aprs3 ax253 kiss3
+bin/pip3 install pyjs8call flask aprs3 ax253 kiss3
 ```
 ## Run Once to build DB and fill in initial settings
 This creates the database and builds the tables. It also asks a series of questions like callsign, which 'modems' to enable, and how time is displayed.

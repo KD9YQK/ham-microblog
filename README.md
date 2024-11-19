@@ -34,9 +34,4 @@ The daemon is what interfaces with JS8Call, and/or the TCP/IP Server. NOTE: JS8C
 
 `bin/python daemon.py`
 
-## Run Web Frontend
-The web frontend is used to start the flask server, so the viewing and creating of posts is possible. In the future, it will be combined into the daemon.
-
-`bin/python webview.py`
-
 Direct browser to http://localhost:5000

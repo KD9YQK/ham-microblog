@@ -18,7 +18,7 @@ class ServerProtocol(asyncio.Protocol):
         clients.append(self)
 
     def data_received(self, data):
-        print(data.decode())
+        print(data)
         # For manual telnet.
         if data == b'\r\n':
             return

@@ -1,3 +1,5 @@
+import time
+
 import pyjs8call
 import db_functions
 
@@ -61,8 +63,8 @@ class JS8modem:
             else:
                 _grid = ' (' + spot.grid + ') '
 
-            # print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, grid, spot.offset,
-            #                                            time.strftime('%x %X', time.localtime(spot.timestamp))))
+            print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, _grid, spot.offset,
+                                                        time.strftime('%x %X', time.localtime(spot.timestamp))))
 
     def cb_get_posts(self, msg):  # Callback when the POSTS? command is received
         # do not respond in the following cases:

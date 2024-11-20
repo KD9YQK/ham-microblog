@@ -23,19 +23,17 @@ class Daemon:
                     self.tcpmodem.send_msg(json.dumps(_t).encode())
 
     def start_tcpmodem(self, host='157.230.203.194', port=8808):
-        loop: asyncio.AbstractEventLoop = asyncio.AbstractEventLoop()
+        loop = asyncio.AbstractEventLoop()
         try:
-            loop = asyncio.get_event_loop()
+            # loop = asyncio.get_event_loop()
             coro = loop.create_connection(tcpModem.ClientProtocol, host=host, port=port)
             _listen = loop.create_task(self.process_outgoing())
             _server = loop.run_until_complete(coro)
             self.tcpmodem = tcpModem.clients[0]
-
             # data = {"type": tcpModem.types.GET_ALL_MSGS, "value": {"callsign": "KD9YQK"}}
             # self.tcpmodem.send_msg(json.dumps(data).encode())
         except ConnectionRefusedError:
             print("TCP/IP ERROR - Unable to connect to TCP Server")
-            return
         except KeyboardInterrupt:
             exit()
         try:
@@ -57,24 +55,33 @@ class Daemon:
 
 
 if __name__ == "__main__":
-    settings = db_functions.get_settings()
-    daemon = Daemon()
-    daemon.settings = settings
+    try:
+        settings = db_functions.get_settings()
+        daemon = Daemon()
+        daemon.settings = settings
 
-    threads = []
-    # JS8Call Modem Thread
-    if settings['js8modem']:
-        threads.append(threading.Thread(target=daemon.start_js8modem(), args=()).start())
+        _loop = asyncio.get_event_loop()
+        _listen = _loop.create_task(daemon.process_outgoing())
 
-    # TCP Modem Thread
-    if settings['tcpmodem']:
-        threads.append(threading.Thread(target=daemon.start_tcpmodem(), args=()).start())
+        threads = []
+        # JS8Call Modem Thread
+        if settings['js8modem']:
+            threads.append(threading.Thread(target=daemon.start_js8modem(), args=()).start())
 
-    # APRS Modem Thread
-    if settings['aprsmodem']:
-        pass
+        # TCP Modem Thread
+        if settings['tcpmodem']:
+            tcphost = '157.230.203.194'
+            tcpport = 8808
+            try:
+                coro = _loop.create_connection(tcpModem.ClientProtocol, host=tcphost, port=tcpport)
+                _server = _loop.run_until_complete(coro)
+                daemon.tcpmodem = tcpModem.clients[0]
+            except ConnectionRefusedError:
+                print("TCP/IP ERROR - Unable to connect to TCP Server")
 
-    # for t in threads:
-    #    t.start()
-    # for t in threads:
-    #    t.join()
+        # APRS Modem Thread
+        if settings['aprsmodem']:
+            pass
+        threads.append(threading.Thread(target=_loop.run_forever()).start())
+    except KeyboardInterrupt:
+        exit()

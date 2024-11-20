@@ -84,7 +84,7 @@ class ServerProtocol(asyncio.Protocol):
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    coro = loop.create_server(ServerProtocol, port=8888)
+    coro = loop.create_server(ServerProtocol, port=8808)
     server = loop.run_until_complete(coro)
     for socket in server.sockets:
         print("serving on {}".format(socket.getsockname()))

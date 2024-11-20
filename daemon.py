@@ -19,7 +19,7 @@ class Daemon:
             if self.settings['tcpmodem']:
                 self.tcpmodem.send_msg(json.dumps(m).encode())
 
-    def start_tcpmodem(self, host='157.230.203.194', port=8888):
+    def start_tcpmodem(self, host='157.230.203.194', port=8808):
         loop: asyncio.AbstractEventLoop = asyncio.AbstractEventLoop()
         try:
             loop = asyncio.get_event_loop()

@@ -14,7 +14,6 @@ class Daemon:
     async def process_outgoing(self):
         while True:
             await asyncio.sleep(1)
-            print('ok')
             msgs = db_functions.get_outgoing_posts()
             for m in msgs:
                 if self.settings['js8modem']:

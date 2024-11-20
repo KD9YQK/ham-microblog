@@ -11,19 +11,24 @@ class Daemon:
     js8modem: js8Modem.JS8modem
     settings: dict
 
-    def process_outgoing(self):
-        msgs = db_functions.get_outgoing_posts()
-        for m in msgs:
-            if self.settings['js8modem']:
-                self.js8modem.broadcast_post(m)
-            if self.settings['tcpmodem']:
-                self.tcpmodem.send_msg(json.dumps(m).encode())
+    async def process_outgoing(self):
+        while True:
+            await asyncio.sleep(1)
+            print('ok')
+            msgs = db_functions.get_outgoing_posts()
+            for m in msgs:
+                if self.settings['js8modem']:
+                    self.js8modem.broadcast_post(m)
+                if self.settings['tcpmodem']:
+                    _t = {'type': tcpModem.types.ADD_BLOG, 'value': m}
+                    self.tcpmodem.send_msg(json.dumps(_t).encode())
 
     def start_tcpmodem(self, host='157.230.203.194', port=8808):
         loop: asyncio.AbstractEventLoop = asyncio.AbstractEventLoop()
         try:
             loop = asyncio.get_event_loop()
             coro = loop.create_connection(tcpModem.ClientProtocol, host=host, port=port)
+            _listen = loop.create_task(self.process_outgoing())
             _server = loop.run_until_complete(coro)
             self.tcpmodem = tcpModem.clients[0]
 

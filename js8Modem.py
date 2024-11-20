@@ -53,7 +53,7 @@ class JS8modem:
     def cb_incoming(self, msg):  # Test callback when any msg is received
 
         pass
-        # print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
+        print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
 
     def cb_new_spots(self, spots):  # Callback when a new spot is received.
         _t = self.is_running

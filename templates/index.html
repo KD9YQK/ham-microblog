@@ -86,7 +86,7 @@
 {% endif %}
 {% for post in blog %}
     <script type="text/javascript">
-        $(document).on('submit','#{{ post['callsign'] }}{{ post['time'] }}-form',function(e){
+        $(document).on('submit','#add_{{ post['callsign'] }}{{ post['time'] }}-form',function(e){
           e.preventDefault();
           $.ajax({
             type:'POST',
@@ -99,6 +99,19 @@
             }
           })
         });
+        $(document).on('submit','#del_{{ post['callsign'] }}{{ post['time'] }}-form',function(e){
+          e.preventDefault();
+          $.ajax({
+            type:'POST',
+            url:'/delmon',
+            data:{delmon:$("#delmon{{ post['callsign'] }}{{ post['time'] }}").val()},
+            success:function(){
+              alert('Removed ' + $("#delmon{{ post['callsign'] }}{{ post['time'] }}").val() + ' from the monitoring list');
+              $('.add_' + $("#delmon{{ post['callsign'] }}{{ post['time'] }}").val()).show()
+              $('.del_' + $("#delmon{{ post['callsign'] }}{{ post['time'] }}").val()).hide()
+            }
+          })
+        });
     </script>
     <div class="post">
         <div class="post-header">
@@ -106,13 +119,23 @@
                 <img src="{{url_for('static', filename='img/is_me.png')}}" width="24px" height="24px">
             {% else %}
                 {% if post['mon'] == False %}
-                    <form method="post" id="{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}">
+                    <form method="post" id="add_{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}">
                         <input type="hidden" value="{{ post['callsign'] }}" name="addmon{{ post['callsign'] }}{{ post['time'] }}" id="addmon{{ post['callsign'] }}{{ post['time'] }}">
                         <button type="submit" class="post-addmonbtn"></button>
                     </form>
-                    <img class="del_{{ post['callsign'] }}" src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px" style="display:none; ">
+                    <form method="post" id="del_{{ post['callsign'] }}{{ post['time'] }}-form" class="del_{{ post['callsign'] }}" style="display:none;">
+                        <input type="hidden" value="{{ post['callsign'] }}" name="delmon{{ post['callsign'] }}{{ post['time'] }}" id="delmon{{ post['callsign'] }}{{ post['time'] }}">
+                        <button type="submit" class="post-delmonbtn"></button>
+                    </form>
                 {% else %}
-                    <img src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px">
+                    <form method="post" id="add_{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}" style="display:none;">
+                        <input type="hidden" value="{{ post['callsign'] }}" name="addmon{{ post['callsign'] }}{{ post['time'] }}" id="addmon{{ post['callsign'] }}{{ post['time'] }}">
+                        <button type="submit" class="post-addmonbtn"></button>
+                    </form>
+                    <form method="post" id="del_{{ post['callsign'] }}{{ post['time'] }}-form" class="del_{{ post['callsign'] }}">
+                        <input type="hidden" value="{{ post['callsign'] }}" name="delmon{{ post['callsign'] }}{{ post['time'] }}" id="delmon{{ post['callsign'] }}{{ post['time'] }}">
+                        <button type="submit" class="post-delmonbtn"></button>
+                    </form>
                 {% endif %}
             {% endif %}
         <strong><a href="/callsign/{{ post['callsign'] }}"> {{ post['callsign'] }} </a></strong>

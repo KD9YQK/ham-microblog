@@ -21,15 +21,7 @@
 
     <div class="post">
         <div class="post-header">
-            {% if post['mon'] == False %}
-                <form method="post" id="addmon-form" class="add_{{ post['callsign'] }}">
-                    <input type="hidden" value="{{ post['callsign'] }}" name="addmon" id="addmon">
-                    <button type="submit" class="post-addmonbtn"></button>
-                </form>
-                <img class="del_{{ post['callsign'] }}" src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px" style="display:none; ">
-            {% else %}
-                <img src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px">
-            {% endif %}
+            <img src="{{url_for('static', filename='img/is_me.png')}}" width="24px" height="24px">
         <strong><a href="/callsign/{{ post['callsign'] }}"> {{ post['callsign'] }} </a></strong>
         </div>
         <div class="post-feed"><p>{{ post['msg'] }}</p></div>

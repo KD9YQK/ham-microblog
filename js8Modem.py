@@ -100,11 +100,11 @@ class JS8modem:
             return
         cut = msg.text.split(' ', maxsplit=3)  # [Command, Callsign or Time, Time or Garbage]
         if len(cut[1]) == 10:  # Timecode detected
-            msg = msg.text.split(f'{cut[1]} ')[1]
-            db_functions.add_blog(abc_to_num(cut[1]), msg.origin, msg)
+            message = msg.text.split(f'{cut[1]} ')[1]
+            db_functions.add_blog(abc_to_num(cut[1]), msg.origin, message)
         else:  # Callsign
-            msg = msg.text.split(f'{cut[2]} ')[1]
-            db_functions.add_blog(abc_to_num(cut[2]), cut[1], msg)
+            message = msg.text.split(f'{cut[2]} ')[1]
+            db_functions.add_blog(abc_to_num(cut[2]), cut[1], message)
 
     #  Broadcast out a new post.
     def broadcast_post(self, post: dict, dest='@BLOG'):

@@ -27,9 +27,10 @@ def build_db():
     cur.execute(table)
     # Creating table for outgoing messages
     table = """ CREATE TABLE outgoing (
-                        time INT NOT NULL,
-                        callsign VARCHAR(25) NOT NULL,
-                        message VARCHAR(255) NOT NULL
+                        time INT,
+                        command VARCHAR(25),
+                        callsign VARCHAR(25),
+                        message VARCHAR(255)
                     ); """
 
     cur.execute(table)
@@ -55,13 +56,14 @@ def build_db():
 
 def get_outgoing_posts():
     con, cur = get_db()
-    rows = cur.execute('''SELECT time, callsign, message FROM outgoing ORDER BY time ASC''')
+    rows = cur.execute('''SELECT time, callsign, message, command FROM outgoing ORDER BY time ASC''')
     retval = []
     for row in rows:
         post = {
             "time": row[0],
             "callsign": row[1],
             "msg": row[2],
+            "command": row[3]
         }
         retval.append(post)
     cur.execute('DELETE FROM outgoing')
@@ -70,10 +72,11 @@ def get_outgoing_posts():
     return retval
 
 
-def add_outgoing_post(mtime: int, callsign: str, msg: str):
+def add_outgoing_post(command: str, mtime: int, callsign: str, msg: str):
     purge_expired_blog()
     con, cur = get_db()
-    cur.execute('''INSERT INTO outgoing (time, callsign, message) VALUES (?, ?, ?)''', (mtime, callsign, msg,))
+    cur.execute('''INSERT INTO outgoing (time, callsign, message, command) VALUES (?, ?, ?, ?)''',
+                (mtime, callsign, msg, command, ))
     con.commit()
     con.close()
 

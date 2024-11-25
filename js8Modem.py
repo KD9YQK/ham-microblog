@@ -111,6 +111,13 @@ class JS8modem:
         message = f"{Command.POST} {num_to_abc(post['time'])} {post['msg']}"
         self.js8call.send_directed_message(dest, message)
 
+    def get_posts(self, dest='@BLOG'):
+        message = f"{Command.GET_POSTS}"
+        self.js8call.send_directed_message(dest, message)
+
+    def get_posts_callsign(self, callsign :str, dest='@BLOG'):
+        message = f"{Command.GET_POSTS} {callsign.upper()}"
+        self.js8call.send_directed_message(dest, message)
 
 if __name__ == '__main__':
     modem: JS8modem

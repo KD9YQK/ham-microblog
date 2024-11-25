@@ -37,6 +37,18 @@
             }
           })
         });
+        $(document).on('submit','#getblog-form',function(e){
+          e.preventDefault();
+          $.ajax({
+            type:'POST',
+            url:'/getblog',
+            data:{getblog:$("#getblog").val()},
+            success:function(){
+              alert('Post Request Msg added to the Outgoing Buffer. Please allow time for TX and RX before refreshing');
+              $('.getblog-btn').hide()
+            }
+          })
+        });
       </script>
 
 </head>
@@ -61,7 +73,12 @@
 {% block body %}
 
 <br>
-<h1>{{ title }}</h1>
+<h1>{{ title }}
+<form id="getblog-form">
+    <input type="hidden" id="getblog" name="getblog" value="@POSTS?">
+    <button class="getblog-btn" id="getblog-btn" type="submit">Get Posts</button>
+</form>
+</h1>
 <br>
 <div class="post-container">
 {% if blog | length < 1 %}
@@ -85,14 +102,18 @@
     </script>
     <div class="post">
         <div class="post-header">
-            {% if post['mon'] == False %}
-                <form method="post" id="{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}">
-                    <input type="hidden" value="{{ post['callsign'] }}" name="addmon{{ post['callsign'] }}{{ post['time'] }}" id="addmon{{ post['callsign'] }}{{ post['time'] }}">
-                    <button type="submit" class="post-addmonbtn"></button>
-                </form>
-                <img class="del_{{ post['callsign'] }}" src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px" style="display:none; ">
+            {% if post['callsign'] == call %}
+                <img src="{{url_for('static', filename='img/is_me.png')}}" width="24px" height="24px">
             {% else %}
-                <img src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px">
+                {% if post['mon'] == False %}
+                    <form method="post" id="{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}">
+                        <input type="hidden" value="{{ post['callsign'] }}" name="addmon{{ post['callsign'] }}{{ post['time'] }}" id="addmon{{ post['callsign'] }}{{ post['time'] }}">
+                        <button type="submit" class="post-addmonbtn"></button>
+                    </form>
+                    <img class="del_{{ post['callsign'] }}" src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px" style="display:none; ">
+                {% else %}
+                    <img src="{{url_for('static', filename='img/is_monitor.png')}}" width="24px" height="24px">
+                {% endif %}
             {% endif %}
         <strong><a href="/callsign/{{ post['callsign'] }}"> {{ post['callsign'] }} </a></strong>
         </div>

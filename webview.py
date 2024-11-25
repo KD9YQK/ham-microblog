@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request
 import db_functions
 import time
+from tcpModem import types
 
 app = Flask(__name__)
 
@@ -45,7 +46,7 @@ def qth():
         msg = request.form.get('newmsg').upper()
         t = int(time.time())
         db_functions.add_blog(t, owncall, msg)
-        db_functions.add_outgoing_post(t, owncall, msg)
+        db_functions.add_outgoing_post(types.ADD_BLOG, t, owncall, msg)
     blog = db_functions.get_callsign_blog(owncall, 0)
     title = f"{owncall} Feed"
     return render_template("qth.html", blog=blog, title=title, call=owncall, timezone=timezone)
@@ -76,8 +77,11 @@ def delmon():
     return "nothing"
 
 
-def start_flask_app():
-    app.run()
+@app.route('/getblog', methods=['POST'])
+def getblog():
+    db_functions.add_outgoing_post(types.GET_ALL_MSGS, 0, '@BLOG', request.form.get('getblog'))
+
+    return "nothing"
 
 
 if __name__ == "__main__":

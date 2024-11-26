@@ -70,6 +70,8 @@ class ServerProtocol(asyncio.Protocol):
                 b.pop('mon', None)
             retval = {"type": types.GET_ALL_MSGS, "value": blog}
             self.send_self(json.dumps(retval).encode())
+            retval = {"type": types.GET_ALL_MSGS, "value": val['data']}
+            self.send_all(json.dumps(retval).encode())
         else:
             retval = {"type": types.ERROR, "value": "UnknownType"}
             self.send_self(json.dumps(retval).encode())

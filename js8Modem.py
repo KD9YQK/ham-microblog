@@ -69,12 +69,13 @@ class JS8modem:
                 _grid = ' '
             else:
                 _grid = ' (' + spot.grid + ') '
-        h = self.js8call.hearing(spots=spots)
-        all = {}
+        h = self.js8call.hearing()
+        allstn = {}
         for stn in h.keys():
             tmp = {'hearing': h[stn], 'heard': self.js8call.station_heard_by(stn)}
+
             all[stn] = tmp
-        print(all)
+        print(allstn)
             # print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, _grid, spot.offset,
             #                                            time.strftime('%x %X', time.localtime(spot.timestamp))))
 

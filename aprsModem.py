@@ -10,11 +10,12 @@ aprs.__version__ = "1.00"
 
 
 def get_aprs_pw(callsign: str):
+    cs = callsign.upper()
     i = 0
     tmp_code = 29666
-    while i < len(callsign):
-        tmp_code = tmp_code ^ ord(callsign[i]) * 256
-        tmp_code = tmp_code ^ ord(callsign[i+1])
+    while i < len(cs):
+        tmp_code = tmp_code ^ ord(cs[i]) * 256
+        tmp_code = tmp_code ^ ord(cs[i+1])
         i += 2
     tmp_code = tmp_code & 32767
     return tmp_code

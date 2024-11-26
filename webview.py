@@ -83,8 +83,12 @@ def delmon():
 
 @app.route('/getblog', methods=['POST'])
 def getblog():
-    db_functions.add_outgoing_post(types.GET_ALL_MSGS, 0, '@BLOG', request.form.get('getblog'))
-
+    trgt = request.form.get('getblog')
+    if trgt == 'POST?':
+        db_functions.add_outgoing_post(types.GET_ALL_MSGS, 0, '@BLOG', request.form.get('getblog'))
+    else:
+        db_functions.add_outgoing_post(types.GET_CALLSIGN, 0, request.form.get('getblog').split(' ')[1], '')
+    print(request.form.get('getblog'))
     return "nothing"
 
 

@@ -72,7 +72,10 @@ class JS8modem:
         h = self.js8call.hearing()
         allstn = {}
         for stn in h.keys():
-            tmp = {'hearing': h[stn], 'heard': self.js8call.station_heard_by(stn)}
+            tmp = {'hearing': h[stn], 'heard': self.js8call.station_heard_by(stn), 'blogger': False}
+            p = db_functions.get_callsign_blog(stn)
+            if len(p) > 0:
+                tmp['blogger'] = True
 
             allstn[stn] = tmp
         print(allstn)

@@ -71,17 +71,38 @@ class JS8modem:
                 _grid = ' '
             else:
                 _grid = ' (' + spot.grid + ') '
-        h = self.js8call.hearing()
+
+        hearing = self.js8call.hearing()
         allstn = {}
-        for stn in h.keys():
-            tmp = {'hearing': h[stn], 'heard': self.js8call.station_heard_by(stn), 'blogger': False}
-            p = db_functions.get_callsign_blog(stn)
-            if len(p) > 0:
+        bloggers = db_functions.get_bloggers()
+        for stn in hearing.keys():
+            h_blog = []
+            h_not = []
+            for h in hearing[stn]:
+                if h in bloggers:
+                    h_blog.append(h)
+                else:
+                    h_not.append(h)
+            tmp = {'hear_blog': h_blog,
+                   'hear_not': h_not,
+                   'blogger': False}
+            if stn in bloggers:
                 tmp['blogger'] = True
+            h_blog = []
+            h_not = []
+            for h in self.js8call.station_heard_by(stn):
+                if h in bloggers:
+                    h_blog.append(h)
+                else:
+                    h_not.append(h)
+                tmp['heard_blog'] = h_blog
+                tmp['heard_not'] = h_not
 
             allstn[stn] = tmp
+            print(allstn)
         with open('tmp/js8.spots', 'wb') as f:
             pickle.dump(allstn, f)
+
         # print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, _grid, spot.offset,
         #                                            time.strftime('%x %X', time.localtime(spot.timestamp))))
 

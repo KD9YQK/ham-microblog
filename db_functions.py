@@ -103,6 +103,15 @@ def get_all_time(timecode: int):
     return retval
 
 
+def get_bloggers():
+    retval = []
+    blogs = get_all_time(0)
+    for p in blogs:
+        if p['callsign'] not in retval:
+            retval.append(p['callsign'])
+    return retval
+
+
 def get_callsign_blog(callsign: str, num: int = 1):
     purge_expired_blog()
     mon = get_monitoring()
@@ -319,21 +328,4 @@ def get_settings():
 
 
 if __name__ == "__main__":
-    build_db()
-    t = get_time()
-    add_blog(t, "KD9YQK",
-             "Today a man knocked on my door and asked for a small donation towards the local swimming pool. I gave him a glass of water.")
-    add_blog(t - 100, "KD9YQK", "Ham and Eggs: A day's work for a chicken, a lifetime commitment for a pig.")
-    add_blog(t - 150, "KD9UEG",
-             "What do you call a dog with no legs? Doesn't matter what you call him, he's not coming.")
-    add_blog(t - 1150, "KD9UEG", "Always identify who to blame in an emergency.")
-    add_blog(t - 140, "KM6LYW",
-             "My wife just found out I replaced our bed with a trampoline; she hit the roof.")
-    add_blog(t - 340, "KM6LYW",
-             "Smoking will kill you... Bacon will kill you... But, smoking bacon will cure it.")
-    add_blog(t - 1250, "KD9YQK", "A liberal is just a conservative that hasn't been mugged yet.")
-    l = []
-    for i in range(0, 5000):
-        l.append({"time": t - 200 - i, "callsign": "KD9YQK", "msg": f"Test Message #{str(i + 1)}"})
-    bulk_add_blog(l)
-    print(get_own_callsign())
+    print(get_bloggers())

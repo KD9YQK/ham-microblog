@@ -69,7 +69,8 @@ class JS8modem:
                 _grid = ' '
             else:
                 _grid = ' (' + spot.grid + ') '
-
+        h = self.js8call.hearing(spots=spots)
+        print(h)
             # print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, _grid, spot.offset,
             #                                            time.strftime('%x %X', time.localtime(spot.timestamp))))
 

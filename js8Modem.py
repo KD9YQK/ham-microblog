@@ -59,8 +59,8 @@ class JS8modem:
         if msg.destination in ['@BLOG', self.js8call.settings.get_station_callsign()]:
             if c == Command.GET_POSTS:
                 self._get_posts(msg)
-            elif c == Command.POST:
-                self._add_post(msg)
+        if c == Command.POST:
+            self._add_post(msg)
 
     def _new_spots_callback(self, spots):  # Callback when a new spot is received.
         _t = self.is_running

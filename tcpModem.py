@@ -24,7 +24,14 @@ class ClientProtocol(asyncio.Protocol):
         print("TCP/IP connection_made: {}".format(self.peername))
         clients.append(self)
         s = db_functions.get_settings()
-        msg = {'type': types.GET_ALL_MSGS, 'call': s['callsign'], 'id': get_aprs_pw(s['callsign']), 'value': {'time': s['tcplast']}}
+        blog = db_functions.get_all_time(s['tcplast'])
+        for b in blog:
+            b.pop('gmt', None)
+            b.pop('local', None)
+            b.pop('mon', None)
+        msg = {'type': types.GET_ALL_MSGS, 'call': s['callsign'], 'id': get_aprs_pw(s['callsign']),
+               'value': {'time': s['tcplast'], 'data': blog}}
+        db_functions.set_tcp_last()
         self.send_msg(json.dumps(msg).encode())
 
     def data_received(self, data):

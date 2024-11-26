@@ -62,6 +62,7 @@ class ServerProtocol(asyncio.Protocol):
             retval = {"type": types.GET_CALLSIGN, "value": blog}
             self.send_self(json.dumps(retval).encode())
         elif cmd == types.GET_ALL_MSGS:
+            db_functions.bulk_add_blog(val['data'])
             blog = db_functions.get_all_time(val['time'])
             for b in blog:
                 b.pop('gmt', None)

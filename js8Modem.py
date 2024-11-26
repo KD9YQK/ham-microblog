@@ -27,15 +27,22 @@ def abc_to_num(abc: str):  # Convert a string of Letters Back to Numbers
     return int(tmp)
 
 
+class modClient(pyjs8call.Client):
+    def stop(self, terminate_js8call=True):
+        self.online = False
+        self.exit_tasks()
+        self.js8call.app.terminate_js8call = False
+        self.js8call.stop()
+
+
 class JS8modem:
     js8call: pyjs8call.Client
     is_running = True
 
     def __init__(self, host='127.0.0.1', port=2442):
-        self.js8call = pyjs8call.Client(host=host, port=port)
+        self.js8call = modClient(host=host, port=port)
         self.js8call.callback.register_incoming(self._incoming_callback)
         self.js8call.callback.register_spots(self._new_spots_callback)
-
         print("* Js8Call Modem Initialized.")
         print(f"* Host: {host} * Port: {port}")
 
@@ -115,9 +122,10 @@ class JS8modem:
         message = f"{Command.GET_POSTS}"
         self.js8call.send_directed_message(dest, message)
 
-    def get_posts_callsign(self, callsign :str, dest='@BLOG'):
+    def get_posts_callsign(self, callsign: str, dest='@BLOG'):
         message = f"{Command.GET_POSTS} {callsign.upper()}"
         self.js8call.send_directed_message(dest, message)
+
 
 if __name__ == '__main__':
     modem: JS8modem

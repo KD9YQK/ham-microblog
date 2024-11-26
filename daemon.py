@@ -4,6 +4,7 @@ import tcpModem
 import asyncio
 import json
 import threading
+from aprsModem import get_aprs_pw
 
 
 class Daemon:
@@ -16,26 +17,30 @@ class Daemon:
             await asyncio.sleep(1)
             msgs = db_functions.get_outgoing_posts()
             for m in msgs:
-                print(m)
+                tcp_msg = {'call': self.settings['callsign'], 'id': get_aprs_pw(self.settings['callsign'])}
                 if m["command"] == tcpModem.types.ADD_BLOG:
                     if self.settings['js8modem']:
                         self.js8modem.broadcast_post(m)
                     if self.settings['tcpmodem']:
-                        _t = {'type': tcpModem.types.ADD_BLOG, 'value': m}
-                        self.tcpmodem.send_msg(json.dumps(_t).encode())
+                        tcp_msg['type'] = tcpModem.types.ADD_BLOG
+                        tcp_msg['value'] = m
+                        self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
                 elif m["command"] == tcpModem.types.GET_ALL_MSGS:
                     if self.settings['js8modem']:
                         self.js8modem.get_posts()
                     if self.settings['tcpmodem']:
-                        s = db_functions.get_settings()
-                        msg = {'type': tcpModem.types.GET_ALL_MSGS, 'value': {'time': s['tcplast']}}
-                        self.tcpmodem.send_msg(json.dumps(msg).encode())
+                        s: dict = db_functions.get_settings()
+                        tcp_msg['type'] = tcpModem.types.GET_ALL_MSGS
+                        tmp: int = s['tcplast']
+                        tcp_msg['value'] = dict({'time': tmp})
+                        self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
                 elif m["command"] == tcpModem.types.GET_CALLSIGN:
                     if self.settings['js8modem']:
                         self.js8modem.get_posts_callsign(m['callsign'])
                     if self.settings['tcpmodem']:
-                        msg = {'type': tcpModem.types.GET_CALLSIGN, 'value': {'callsign': m['callsign']}}
-                        self.tcpmodem.send_msg(json.dumps(msg).encode())
+                        tcp_msg['type'] = tcpModem.types.GET_CALLSIGN
+                        tcp_msg['value'] = {'callsign': m['callsign']}
+                        self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
 
     def start_tcpmodem(self, host='157.230.203.194', port=8808):
         loop = asyncio.AbstractEventLoop()

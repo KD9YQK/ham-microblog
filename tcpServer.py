@@ -2,6 +2,7 @@ import asyncio
 import json
 import db_functions
 from tcpModem import types
+from aprsModem import get_aprs_pw
 
 clients = []
 
@@ -43,6 +44,12 @@ class ServerProtocol(asyncio.Protocol):
         ##################################
         cmd = decoded["type"]
         val: dict = decoded['value']
+        call: str = decoded['call']
+        aprs_id: int = decoded['id']
+        if aprs_id != get_aprs_pw(call.upper()):
+            c: ServerProtocol = clients[clients.index(self)]
+            c.transport.close()
+            print(f'Kicked {call} Bad PW. Was:{aprs_id} should be {get_aprs_pw(call.upper())}')
         if cmd == types.ADD_BLOG:
             db_functions.add_blog(val['time'], val['callsign'], val['msg'])
             self.send_all(data)

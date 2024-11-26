@@ -9,6 +9,17 @@ aprs.__distribution__ = "kiss3_async.py"
 aprs.__version__ = "1.00"
 
 
+def get_aprs_pw(callsign: str):
+    i = 0
+    tmp_code = 29666
+    while i < len(callsign):
+        tmp_code = tmp_code ^ ord(callsign[i]) * 256
+        tmp_code = tmp_code ^ ord(callsign[i+1])
+        i += 2
+    tmp_code = tmp_code & 32767
+    return tmp_code
+
+
 class igate_params:
     # host = "noam.aprs2.net"
     host = '205.209.228.99'
@@ -149,3 +160,6 @@ class Radio:
                 self.tx_buffer.append(msg)
                 print(self.tx_buffer)
                 print("Message Sent")
+
+if __name__ == "__main__":
+    print(get_aprs_pw('KD9YQK'))

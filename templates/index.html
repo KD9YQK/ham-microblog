@@ -73,12 +73,19 @@
 {% block body %}
 
 <br>
-<h1>{{ title }}
-<form id="getblog-form">
-    <input type="hidden" id="getblog" name="getblog" value="@POSTS?">
-    <button class="getblog-btn" id="getblog-btn" type="submit">Get Posts</button>
-</form>
-</h1>
+<div class="page-title">
+    <h1>{{ title }}</h1>
+    <form id="getblog-form">
+        <input type="hidden" id="getblog" name="getblog" value="{{ target }}">
+        <button class="getblog-btn" id="getblog-btn" type="submit" title="
+            {% if target == 'POSTS?' %}
+                Get Posts
+            {% else %}
+                Get {{ target.strip('POSTS? ') }}'s Posts
+            {% endif %}
+        "></button>
+    </form>
+</div>
 <br>
 <div class="post-container">
 {% if blog | length < 1 %}

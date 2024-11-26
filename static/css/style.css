@@ -11,9 +11,29 @@ body{
     background: #fafafa;
 }
 
-h1{
+.page-title{
+    display: flex;
+    width: 340px;
+    margin: 0 auto;
+    align-items: center;
+    padding: 1.2rem;
+    gap: 10px;
+}
+
+
+.page-title h1{
     text-align: center;
 }
+
+
+.page-title .getblog-btn{
+    background: url('../img/radio_icon.png');
+    width:32px;
+    height:32px;
+    border:none;
+    background-size: 100% 100%;
+}
+
 
 .header {
   padding: 60px;

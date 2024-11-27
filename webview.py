@@ -1,3 +1,4 @@
+import pickle
 
 from flask import Flask, render_template, request
 import db_functions
@@ -12,37 +13,37 @@ app = Flask(__name__)
 def index():
     settings = db_functions.get_settings()
     owncall = settings['callsign']
-    timezone = settings['timezone']
+    if settings['js8modem']:
+        with open('tmp/js8.spots', 'rb') as f:
+            settings['js8spots'] = pickle.load(f)
+            print(settings['js8spots'])
     if request.method == 'POST':  # A search was used
         call = request.form.get('callsign').upper()
         if call == "":
             blog = db_functions.get_all_blog()
-            return render_template("index.html", blog=blog, title="Main Feed", call=owncall, timezone=timezone, target=target)
+            return render_template("index.html", blog=blog, title="Main Feed", settings=settings, target=target)
         blog = db_functions.get_callsign_blog(call, 0)
         title = f"{call}'s Feed"
         if call == owncall:
-            return render_template("qth.html", blog=blog, title=title, call=owncall, timezone=timezone, target=target)
+            return render_template("qth.html", blog=blog, title=title, settings=settings, target=target)
         else:
-            return render_template("index.html", blog=blog, title=title, call=owncall, timezone=timezone, target=f"{target} {call}")
+            return render_template("index.html", blog=blog, title=title, settings=settings, target=f"{target} {call}")
     else:  # Default Main Page
         blog = db_functions.get_all_blog()
-        return render_template("index.html", blog=blog, title="Main Feed", call=owncall, timezone=timezone, target=target)
+        return render_template("index.html", blog=blog, title="Main Feed", settings=settings, target=target)
 
 
 @app.route("/monitoring")
 def monitoring():
     settings = db_functions.get_settings()
-    owncall = settings['callsign']
-    timezone = settings['timezone']
     blog = db_functions.get_monitoring_blog()
-    return render_template("index.html", blog=blog, title="Monitoring Feed", call=owncall, timezone=timezone, target=target)
+    return render_template("index.html", blog=blog, title="Monitoring Feed", settings=settings, target=target)
 
 
 @app.route("/qth", methods=['GET', 'POST'])
 def qth():
     settings = db_functions.get_settings()
     owncall = settings['callsign']
-    timezone = settings['timezone']
     if request.method == 'POST':
         msg = request.form.get('newmsg').upper()
         t = int(time.time())
@@ -50,20 +51,19 @@ def qth():
         db_functions.add_outgoing_post(types.ADD_BLOG, t, owncall, msg)
     blog = db_functions.get_callsign_blog(owncall, 0)
     title = f"{owncall}'s Feed"
-    return render_template("qth.html", blog=blog, title=title, call=owncall, timezone=timezone, target=target)
+    return render_template("qth.html", blog=blog, title=title, settings=settings, target=target)
 
 
 @app.route("/callsign/<call>")
 def callsign(call):
     settings = db_functions.get_settings()
     owncall = settings['callsign']
-    timezone = settings['timezone']
     blog = db_functions.get_callsign_blog(call, 0)
     title = f"{call}'s Feed"
     if call == owncall:
-        return render_template("qth.html", blog=blog, title=title, call=owncall, timezone=timezone, target=target)
+        return render_template("qth.html", blog=blog, title=title, settings=settings, target=target)
     else:
-        return render_template("index.html", blog=blog, title=title, call=owncall, timezone=timezone, target=f"{target} {call}")
+        return render_template("index.html", blog=blog, title=title, settings=settings, target=f"{target} {call}")
 
 
 ###########################################

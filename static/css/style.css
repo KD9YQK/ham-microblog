@@ -189,6 +189,44 @@ body{
   background: #ccc;
 }
 
+.js8_call_stations{
+  position: absolute;
+  float: left;
+  width: 300px; /* Set the width of the sidebar */
+  left: 10%;
+  display:grid;
+  gap:4px;
+
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px;
+
+}
+
+.js8_call_collapse {
+  background-color: lightgrey;
+  color: black;
+  cursor: pointer;
+  padding: 8px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  border-radius: 10px;
+}
+
+.js8_call_active, .js8_call_collapse:hover {
+  background-color: grey;
+}
+
+.js8_call_content {
+  color: black;
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  padding-bottom: 2px;
+}
+
 @media screen and (max-width: 600px) {
   .topnav .search-container {
     float: none;

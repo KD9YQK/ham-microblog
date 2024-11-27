@@ -41,8 +41,7 @@ class JS8modem:
     is_running = True
 
     def __init__(self, host='127.0.0.1', port=2442):
-        with open('tmp/js8.spots', 'wb') as f:
-            pickle.dump({}, f)
+
         self.js8call = modClient(host=host, port=port)
         self.js8call.callback.register_incoming(self._incoming_callback)
         self.js8call.callback.register_spots(self._new_spots_callback)
@@ -52,6 +51,10 @@ class JS8modem:
     def start(self):
         self.js8call.start()
         self.js8call.inbox.enable()
+        with open('tmp/js8.spots', 'wb') as f:
+            pickle.dump({self.js8call.settings.get_station_callsign(True): {'hear_blog': [], 'hear_not': [],
+                                                                        'heard_blog': [], 'heard_not': [],
+                                                                        'blogger': True}}, f)
 
     ###########################################
     # Callbacks

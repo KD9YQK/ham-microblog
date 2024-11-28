@@ -35,6 +35,9 @@ def index():
 @app.route("/monitoring")
 def monitoring():
     settings = db_functions.get_settings()
+    if settings['js8modem']:
+        with open('tmp/js8.spots', 'rb') as f:
+            settings['js8spots'] = pickle.load(f)
     blog = db_functions.get_monitoring_blog()
     return render_template("index.html", blog=blog, title="Monitoring Feed", settings=settings, target=target)
 
@@ -43,6 +46,9 @@ def monitoring():
 def qth():
     settings = db_functions.get_settings()
     owncall = settings['callsign']
+    if settings['js8modem']:
+        with open('tmp/js8.spots', 'rb') as f:
+            settings['js8spots'] = pickle.load(f)
     if request.method == 'POST':
         msg = request.form.get('newmsg').upper()
         t = int(time.time())
@@ -57,6 +63,9 @@ def qth():
 def callsign(call):
     settings = db_functions.get_settings()
     owncall = settings['callsign']
+    if settings['js8modem']:
+        with open('tmp/js8.spots', 'rb') as f:
+            settings['js8spots'] = pickle.load(f)
     blog = db_functions.get_callsign_blog(call, 0)
     title = f"{call}'s Feed"
     if call == owncall:

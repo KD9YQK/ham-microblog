@@ -62,7 +62,7 @@ class JS8modem:
     # Callbacks
     ###########################################
     def _incoming_callback(self, msg):  # Test callback when any msg is received
-        print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
+        # print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
         c = msg.text.split(' ')[0]
         if msg.destination in ['@BLOG', self.js8call.settings.get_station_callsign()]:
             if c == Command.GET_POSTS:

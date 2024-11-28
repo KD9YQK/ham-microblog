@@ -227,6 +227,20 @@ body{
   padding-bottom: 2px;
 }
 
+.js8btn{
+    background: url('../img/radio_icon.png');
+    width:16px;
+    height:16px;
+    border:none;
+    background-size: 100% 100%;
+}
+
+.js8beacon{
+    display: flex;
+    align-items: left;
+    gap: 2px;
+}
+
 @media screen and (max-width: 600px) {
   .topnav .search-container {
     float: none;

@@ -11,6 +11,7 @@ class types:
     ADD_BLOG = 'addblog'
     GET_CALLSIGN = 'getcallsign'
     GET_ALL_MSGS = 'getall'
+    GET_MSG_TARGET = 'gettarget'
 
 
 class ClientProtocol(asyncio.Protocol):

@@ -41,6 +41,9 @@ class Daemon:
                         tcp_msg['type'] = tcpModem.types.GET_CALLSIGN
                         tcp_msg['value'] = {'callsign': m['callsign']}
                         self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
+                elif m["command"] == tcpModem.types.GET_MSG_TARGET:
+                    if self.settings['js8modem']:
+                        self.js8modem.get_posts_callsign(dest=m['callsign'], callsign=m['msg'])
 
     def start_tcpmodem(self, host='157.230.203.194', port=8808):
         loop = asyncio.AbstractEventLoop()

@@ -16,6 +16,8 @@ def index():
     if settings['js8modem']:
         with open('tmp/js8.spots', 'rb') as f:
             settings['js8spots'] = pickle.load(f)
+        # settings['js8spots']['KD8HHH'] = {'blogger': True, 'hear_blog':['KD9YQK'], 'heard_blog':['KD9YQK'], 'hear_not':[],'heard_not':[]}
+        # settings['js8spots']['KD9YQK'] = {'blogger': True, 'hear_blog': ['KD8HHH'], 'heard_blog': ['KD8HHH'], 'hear_not': [], 'heard_not': []}
     if request.method == 'POST':  # A search was used
         call = request.form.get('callsign').upper()
         if call == "":
@@ -89,13 +91,21 @@ def delmon():
     return "nothing"
 
 
+@app.route('/getjs8target', methods=['POST'])
+def getjs8target():
+    trgt = request.form.get('js8station')
+    msg = request.form.get('js8msg')
+    db_functions.add_outgoing_post(types.GET_MSG_TARGET, 0, trgt, msg)
+    return "nothing"
+
+
 @app.route('/getblog', methods=['POST'])
 def getblog():
     trgt = request.form.get('getblog')
     if trgt == 'POST?':
-        db_functions.add_outgoing_post(types.GET_ALL_MSGS, 0, '@BLOG', request.form.get('getblog'))
+        db_functions.add_outgoing_post(types.GET_ALL_MSGS, 0, '@BLOG', trgt)
     else:
-        db_functions.add_outgoing_post(types.GET_CALLSIGN, 0, request.form.get('getblog').split(' ')[1], '')
+        db_functions.add_outgoing_post(types.GET_CALLSIGN, 0, trgt.split(' ')[1], '')
     print(request.form.get('getblog'))
     return "nothing"
 

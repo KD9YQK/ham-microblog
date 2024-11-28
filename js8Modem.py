@@ -160,7 +160,9 @@ class JS8modem:
         self.js8call.send_directed_message(dest, message)
 
     def get_posts_callsign(self, callsign: str, dest='@BLOG'):
-        message = f"{Command.GET_POSTS} {callsign.upper()}"
+        message = f"{Command.GET_POSTS}"
+        if len(callsign) > 0:
+            message += f" {callsign.upper()}"
         self.js8call.send_directed_message(dest, message)
 
 

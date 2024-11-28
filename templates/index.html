@@ -11,32 +11,6 @@
           crossorigin="anonymous"></script>
 
     <script type="text/javascript">
-        $(document).on('submit','#addmon-form',function(e){
-          e.preventDefault();
-          $.ajax({
-            type:'POST',
-            url:'/addmon',
-            data:{addmon:$("#addmon").val()},
-            success:function(){
-              alert('Added ' + $("#addmon").val() + ' to the monitoring list');
-              $('.add_' + $("#addmon").val()).hide()
-              $('.del_' + $("#addmon").val()).show()
-            }
-          })
-        });
-        $(document).on('submit','#delmon-form',function(e){
-          e.preventDefault();
-          $.ajax({
-            type:'POST',
-            url:'/delmon',
-            data:{delmon:$("#delmon").val()},
-            success:function(){
-              alert('Removed ' + $("#delmon").val() + ' from the monitoring list');
-              $('.del_' + $("#delmon").val()).hide()
-              $('.add_' + $("#delmon").val()).show()
-            }
-          })
-        });
         $(document).on('submit','#getblog-form',function(e){
           e.preventDefault();
           $.ajax({
@@ -82,10 +56,10 @@
             <h5>Hearing</h5>
             <ul>
             {% for c in settings['js8spots'][settings['callsign']]['hear_blog'] %}
-                <li style="background:lime; color:black;">{{ c }}</li>
+                <li style="background:lightgrey;">{{ c }}</li>
             {% endfor %}
             {% for c in settings['js8spots'][settings['callsign']]['hear_not'] %}
-                <li style="color:black;">{{ c }}</li>
+                <li>{{ c }}</li>
             {% endfor %}
             </ul>
         </div>
@@ -93,29 +67,71 @@
             <h5>Heard By</h5>
             <ul>
             {% for c in settings['js8spots'][settings['callsign']]['heard_blog'] %}
-                <li style="background:lime; color:black;">{{ c }}</li>
+                <li style="background:lightgrey;">{{ c }}</li>
             {% endfor %}
             {% for c in settings['js8spots'][settings['callsign']]['heard_not'] %}
-                <li style="color:black;">{{ c }}</li>
+                <li>{{ c }}</li>
             {% endfor %}
             </ul>
         </div>
     </div>
+
     <hr><p style="text-align:center;">Reachable Bloggers</p><hr>
     {% for k in settings['js8spots'].keys() %}
         {% set s = settings['js8spots'][k] %}
         {% set own = settings['js8spots'][settings['callsign']] %}
         {% if k != settings['callsign'] and k in own['hear_blog'] and k in own['heard_blog'] %}
-        <button type="button" class="js8_call_collapse" style="background:teal;">{{ k }}</button>
-        <div class="js8_call_content" style="background:teal; color:black;">
+        <button type="button" class="js8_call_collapse">{{ k }}</button>
+        <div class="js8_call_content">
+
+            <script>
+            $(document).on('submit','#js8target{{ k }}',function(e){
+                e.preventDefault();
+                $.ajax({
+                    type:'POST',
+                    url:'/getjs8target',
+                    data:{js8station:$("#js8station{{ k }}").val(), js8msg:$("#js8msg{{ k }}").val()},
+                    success:function(){
+                        for (let el of document.querySelectorAll('.js8btn')) el.style.display = 'none';
+                        alert('Post Request Msg added to the Outgoing Buffer. Please allow time for TX and RX before refreshing');
+                    }
+                })
+            });
+            </script>
+            <form class="js8target" id="js8target{{ k }}">
+                <input type="hidden" class="js8station" id="js8station{{ k }}" value="{{ k }}">
+                <input type="hidden" class="js8msg" id="js8msg{{ k }}" value="">
+                <button type="submit" class="js8btn2">Get Posts</button>
+            </form>
+
             <div style="float:left; width:45%;">
                 <h5>Hearing</h5>
                 <ul>
                 {% for c in settings['js8spots'][k]['hear_blog'] %}
-                    <li style="background:aqua; color:black;">{{ c }}</li>
+                    <script>
+                        $(document).on('submit','#js8target{{ k+c }}',function(e){
+                            e.preventDefault();
+                            $.ajax({
+                                type:'POST',
+                                url:'/getjs8target',
+                                data:{js8station:$("#js8station{{ k+c }}").val(), js8msg:$("#js8msg{{ k+c }}").val()},
+                                success:function(){
+                                    for (let el of document.querySelectorAll('.js8btn')) el.style.display = 'none';
+                                    alert('Post Request Msg added to the Outgoing Buffer. Please allow time for TX and RX before refreshing');
+                                }
+                            })
+                        });
+                    </script>
+                    <li style="background:lightgrey;">
+                        <form class="js8target" id="js8target{{ k+c }}">{{ c }}
+                            <input type="hidden" id="js8station{{ k+c }}" value="{{ k }}">
+                            <input type="hidden" id="js8msg{{ k+c }}" value="{{ c }}">
+                            <button type="submit" class="js8btn"></button>
+                        </form>
+                    </li>
                 {% endfor %}
                 {% for c in settings['js8spots'][k]['hear_not'] %}
-                    <li style="color:black;">{{ c }}</li>
+                    <li>{{ c }}</li>
                 {% endfor %}
                 </ul>
             </div>
@@ -123,10 +139,10 @@
                 <h5>Heard By</h5>
                 <ul>
                 {% for c in settings['js8spots'][k]['heard_blog'] %}
-                    <li style="background:aqua; color:black;">{{ c }}</li>
+                    <li style="background:lightgrey;">{{ c }}</li>
                 {% endfor %}
                 {% for c in settings['js8spots'][k]['heard_not'] %}
-                    <li style="color:black;">{{ c }}</li>
+                    <li>{{ c }}</li>
                 {% endfor %}
                 </ul>
             </div>
@@ -312,24 +328,20 @@
                 <img src="{{url_for('static', filename='img/is_me.png')}}" width="24px" height="24px">
             {% else %}
                 {% if post['mon'] == False %}
-                    <form method="post" id="add_{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}">
-                        <input type="hidden" value="{{ post['callsign'] }}" name="addmon{{ post['callsign'] }}{{ post['time'] }}" id="addmon{{ post['callsign'] }}{{ post['time'] }}">
-                        <button type="submit" class="post-addmonbtn"></button>
-                    </form>
-                    <form method="post" id="del_{{ post['callsign'] }}{{ post['time'] }}-form" class="del_{{ post['callsign'] }}" style="display:none;">
-                        <input type="hidden" value="{{ post['callsign'] }}" name="delmon{{ post['callsign'] }}{{ post['time'] }}" id="delmon{{ post['callsign'] }}{{ post['time'] }}">
-                        <button type="submit" class="post-delmonbtn"></button>
-                    </form>
+                    {% set sh = "" %}
+                    {% set hd = "display:none;" %}
                 {% else %}
-                    <form method="post" id="add_{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}" style="display:none;">
-                        <input type="hidden" value="{{ post['callsign'] }}" name="addmon{{ post['callsign'] }}{{ post['time'] }}" id="addmon{{ post['callsign'] }}{{ post['time'] }}">
-                        <button type="submit" class="post-addmonbtn"></button>
-                    </form>
-                    <form method="post" id="del_{{ post['callsign'] }}{{ post['time'] }}-form" class="del_{{ post['callsign'] }}">
-                        <input type="hidden" value="{{ post['callsign'] }}" name="delmon{{ post['callsign'] }}{{ post['time'] }}" id="delmon{{ post['callsign'] }}{{ post['time'] }}">
-                        <button type="submit" class="post-delmonbtn"></button>
-                    </form>
+                    {% set sh = "" %}
+                    {% set hd = "display:none;" %}
                 {% endif %}
+                <form method="post" id="add_{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}" style="{{ sh }}">
+                    <input type="hidden" value="{{ post['callsign'] }}" name="addmon{{ post['callsign'] }}{{ post['time'] }}" id="addmon{{ post['callsign'] }}{{ post['time'] }}">
+                    <button type="submit" class="post-addmonbtn"></button>
+                </form>
+                <form method="post" id="del_{{ post['callsign'] }}{{ post['time'] }}-form" class="del_{{ post['callsign'] }}" style="{{ hd }}">
+                    <input type="hidden" value="{{ post['callsign'] }}" name="delmon{{ post['callsign'] }}{{ post['time'] }}" id="delmon{{ post['callsign'] }}{{ post['time'] }}">
+                    <button type="submit" class="post-delmonbtn"></button>
+                </form>
             {% endif %}
         <strong><a href="/callsign/{{ post['callsign'] }}"> {{ post['callsign'] }} </a></strong>
         </div>

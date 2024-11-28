@@ -135,7 +135,7 @@
 
     <hr><p style="text-align:center;">Unreachable Bloggers</p><hr>
     {% for k in settings['js8spots'].keys() %}
-        {% if k != settings['callsign'] and k['blogger'] %}
+        {% if k != settings['callsign'] and k['blogger'] == True %}
         <button type="button" class="js8_call_collapse">{{ k }}</button>
         <div class="js8_call_content">
             <div style="float:left; width:45%;">

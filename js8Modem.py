@@ -75,7 +75,8 @@ class JS8modem:
             else:
                 _grid = ' (' + spot.grid + ') '
 
-        hearing = self.js8call.hearing()
+        hearing = self.js8call.hearing(age=120)
+        hearing = hearing | self.js8call.hearing(spots=spots, age=120)
         allstn = {}
         bloggers = db_functions.get_bloggers()
         for stn in hearing.keys():
@@ -93,7 +94,7 @@ class JS8modem:
                 tmp['blogger'] = True
             h_blog = []
             h_not = []
-            for h in self.js8call.station_heard_by(stn):
+            for h in self.js8call.station_heard_by(station=stn, age=120):
                 if h in bloggers:
                     h_blog.append(h)
                 else:

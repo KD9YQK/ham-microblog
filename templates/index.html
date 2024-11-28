@@ -79,7 +79,7 @@
     <button type="button" class="js8_call_collapse">{{ settings['callsign'] }}</button>
     <div class="js8_call_content">
         <div style="float:left; width:45%;">
-            <h5 style="color:black;">Hearing</h5>
+            <h5>Hearing</h5>
             <ul>
             {% for c in settings['js8spots'][settings['callsign']]['hear_blog'] %}
                 <li style="background:lime; color:black;">{{ c }}</li>
@@ -90,7 +90,7 @@
             </ul>
         </div>
         <div style="float:right; width:45%;">
-            <h5 style="color:black;">Heard By</h5>
+            <h5>Heard By</h5>
             <ul>
             {% for c in settings['js8spots'][settings['callsign']]['heard_blog'] %}
                 <li style="background:lime; color:black;">{{ c }}</li>
@@ -108,7 +108,7 @@
         <button type="button" class="js8_call_collapse" style="background:teal;">{{ k }}</button>
         <div class="js8_call_content" style="background:teal; color:black;">
             <div style="float:left; width:45%;">
-                <h5 style="color:black;">Hearing</h5>
+                <h5>Hearing</h5>
                 <ul>
                 {% for c in settings['js8spots'][k]['hear_blog'] %}
                     <li style="background:aqua; color:black;">{{ c }}</li>
@@ -119,7 +119,7 @@
                 </ul>
             </div>
             <div style="float:right; width:45%;">
-                <h5 style="color:black;">Heard By</h5>
+                <h5>Heard By</h5>
                 <ul>
                 {% for c in settings['js8spots'][k]['heard_blog'] %}
                     <li style="background:aqua; color:black;">{{ c }}</li>
@@ -136,7 +136,7 @@
     <hr><p style="text-align:center;">Unreachable Bloggers</p><hr>
     {% for k in settings['js8spots'].keys() %}
         {% if k != settings['callsign'] and (k not in settings['js8spots'][settings['callsign']]['hear_blog'] or
-            k not in settings['js8spots'][settings['callsign']]['heard_blog']) and k['blogger'] %}
+            k not in settings['js8spots'][settings['callsign']]['heard_blog']) and k['blogger'] == True %}
         <button type="button" class="js8_call_collapse">{{ k }}</button>
         <div class="js8_call_content">
             <div style="float:left; width:45%;">

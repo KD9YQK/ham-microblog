@@ -81,21 +81,21 @@ class JS8modem:
         bloggers = db_functions.get_bloggers()
         h_blog = []
         h_not = []
-        hear = self.js8call.station_heard_by(age=120)
+        hear = self.js8call.station_hearing(age=120)
         for stn in hear:
             if stn in bloggers:
                 h_blog.append(stn)
             else:
                 h_not.append(stn)
-        tmp = {'heard_blog': h_blog, 'heard_not': h_not, 'blogger': True}
+        tmp = {'hear_blog': h_blog, 'hear_not': h_not, 'blogger': True}
         h_blog = []
         h_not = []
-        for stn in self.js8call.station_hearing(age=120):
+        for stn in self.js8call.station_heard_by(age=120):
             if stn in bloggers:
                 h_blog.append(stn)
             else:
                 h_not.append(stn)
-        tmp = tmp | {'hear_blog': h_blog, 'hear_not': h_not}
+        tmp = tmp | {'heard_blog': h_blog, 'heard_not': h_not}
         allstn[self.js8call.settings.get_station_callsign()] = tmp
 
         for stn in hear:

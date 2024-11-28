@@ -105,7 +105,6 @@ class JS8modem:
 
         with open('tmp/js8.spots', 'wb') as f:
             pickle.dump(allstn, f)
-        print(allstn)
 
         # print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, _grid, spot.offset,
         #                                            time.strftime('%x %X', time.localtime(spot.timestamp))))

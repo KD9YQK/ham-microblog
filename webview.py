@@ -16,7 +16,6 @@ def index():
     if settings['js8modem']:
         with open('tmp/js8.spots', 'rb') as f:
             settings['js8spots'] = pickle.load(f)
-            print(settings['js8spots'])
     if request.method == 'POST':  # A search was used
         call = request.form.get('callsign').upper()
         if call == "":

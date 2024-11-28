@@ -103,8 +103,9 @@
     </div>
     <hr><p style="text-align:center;">Reachable Bloggers</p><hr>
     {% for k in settings['js8spots'].keys() %}
-        {% if k != settings['callsign'] and k in settings['js8spots'][settings['callsign']]['hear_blog'] and
-            k in settings['js8spots'][settings['callsign']]['heard_blog'] %}
+        {% set s = settings['js8spots'][k] %}
+        {% set own = settings['js8spots'][settings['callsign']] %}
+        {% if k != settings['callsign'] and k in own['hear_blog'] and k in own['heard_blog'] %}
         <button type="button" class="js8_call_collapse" style="background:teal;">{{ k }}</button>
         <div class="js8_call_content" style="background:teal; color:black;">
             <div style="float:left; width:45%;">
@@ -136,7 +137,8 @@
     <hr><p style="text-align:center;">Unreachable Bloggers</p><hr>
     {% for k in settings['js8spots'].keys() %}
         {% set s = settings['js8spots'][k] %}
-        {% if s['blogger'] and k != settings['callsign'] %}
+        {% set own = settings['js8spots'][settings['callsign']] %}
+        {% if k != settings['callsign'] and (k not in own['hear_blog'] or k not in own['heard_blog']) and s['blogger'] %}
         <button type="button" class="js8_call_collapse">{{ k }}</button>
         <div class="js8_call_content">
             <div style="float:left; width:45%;">
@@ -167,8 +169,9 @@
 
     <hr><p style="text-align:center;">Reachable Stations</p><hr>
     {% for k in settings['js8spots'].keys() %}
-        {% if k != settings['callsign'] and k in settings['js8spots'][settings['callsign']]['hear_not'] and
-            k in settings['js8spots'][settings['callsign']]['heard_not'] %}
+        {% set s = settings['js8spots'][k] %}
+        {% set own = settings['js8spots'][settings['callsign']] %}
+        {% if k != settings['callsign'] and k in own['hear_not'] and k in own['heard_blog'] %}
         <button type="button" class="js8_call_collapse">{{ k }}</button>
         <div class="js8_call_content">
             <div style="float:left; width:45%;">
@@ -199,8 +202,9 @@
 
     <hr><p style="text-align:center;">Unreachable Stations</p><hr>
     {% for k in settings['js8spots'].keys() %}
-        {% if k != settings['callsign'] and (k not in settings['js8spots'][settings['callsign']]['hear_not'] or
-            k not in settings['js8spots'][settings['callsign']]['heard_not']) and not k['blogger'] %}
+        {% set s = settings['js8spots'][k] %}
+        {% set own = settings['js8spots'][settings['callsign']] %}
+        {% if k != settings['callsign'] and (k not in own['hear_not'] or k not in own['heard_not']) and not s['blogger'] %}
         <button type="button" class="js8_call_collapse">{{ k }}</button>
         <div class="js8_call_content">
             <div style="float:left; width:45%;">

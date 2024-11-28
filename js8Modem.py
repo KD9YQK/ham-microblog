@@ -87,7 +87,7 @@ class JS8modem:
                 h_blog.append(stn)
             else:
                 h_not.append(stn)
-        tmp = {'hear_blog': h_blog, 'hear_not': h_not, 'blogger': True}
+        tmp = {'heard_blog': h_blog, 'heard_not': h_not, 'blogger': True}
         h_blog = []
         h_not = []
         for stn in self.js8call.station_hearing(age=120):
@@ -95,7 +95,7 @@ class JS8modem:
                 h_blog.append(stn)
             else:
                 h_not.append(stn)
-        tmp = tmp | {'heard_blog': h_blog, 'heard_not': h_not}
+        tmp = tmp | {'hear_blog': h_blog, 'hear_not': h_not}
         allstn[self.js8call.settings.get_station_callsign()] = tmp
 
         for stn in hear:
@@ -106,8 +106,8 @@ class JS8modem:
                     h_blog.append(h)
                 else:
                     h_not.append(h)
-            tmp = {'hear_blog': h_blog,
-                   'hear_not': h_not,
+            tmp = {'heard_blog': h_blog,
+                   'heard_not': h_not,
                    'blogger': False}
             if stn in bloggers:
                 tmp['blogger'] = True
@@ -118,8 +118,8 @@ class JS8modem:
                     h_blog.append(h)
                 else:
                     h_not.append(h)
-                tmp['heard_blog'] = h_blog
-                tmp['heard_not'] = h_not
+                tmp['hear_blog'] = h_blog
+                tmp['hear_not'] = h_not
             allstn[stn] = tmp
 
         with open('tmp/js8.spots', 'wb') as f:

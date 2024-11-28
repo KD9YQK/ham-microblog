@@ -199,7 +199,7 @@
     <hr><p style="text-align:center;">Unreachable Stations</p><hr>
     {% for k in settings['js8spots'].keys() %}
         {% if k != settings['callsign'] and (k not in settings['js8spots'][settings['callsign']]['hear_not'] or
-            k not in settings['js8spots'][settings['callsign']]['heard_not']) and k['blogger'] == False %}
+            k not in settings['js8spots'][settings['callsign']]['heard_not']) and not k['blogger'] %}
         <button type="button" class="js8_call_collapse">{{ k }}</button>
         <div class="js8_call_content">
             <div style="float:left; width:45%;">

@@ -55,8 +55,8 @@ class JS8modem:
         self.js8call.inbox.enable()
         with open('tmp/js8.spots', 'wb') as f:
             pickle.dump({self.js8call.settings.get_station_callsign(True): {'hear_blog': [], 'hear_not': [],
-                                                                        'heard_blog': [], 'heard_not': [],
-                                                                        'blogger': True}}, f)
+                                                                            'heard_blog': [], 'heard_not': [],
+                                                                            'blogger': True}}, f)
 
     ###########################################
     # Callbacks
@@ -77,14 +77,31 @@ class JS8modem:
             else:
                 _grid = ' (' + spot.grid + ') '
 
-        hearing = self.js8call.hearing(age=120)
-        hearing = hearing | self.js8call.hearing(spots=spots, age=120)
         allstn = {}
         bloggers = db_functions.get_bloggers()
-        for stn in hearing.keys():
+        h_blog = []
+        h_not = []
+        hear = self.js8call.station_heard_by(age=120)
+        for stn in hear:
+            if stn in bloggers:
+                h_blog.append(stn)
+            else:
+                h_not.append(stn)
+        tmp = {'hear_blog': h_blog, 'hear_not': h_not, 'blogger': True}
+        h_blog = []
+        h_not = []
+        for stn in self.js8call.station_hearing(age=120):
+            if stn in bloggers:
+                h_blog.append(stn)
+            else:
+                h_not.append(stn)
+        tmp = tmp | {'heard_blog': h_blog, 'heard_not': h_not}
+        allstn[self.js8call.settings.get_station_callsign()] = tmp
+
+        for stn in hear:
             h_blog = []
             h_not = []
-            for h in hearing[stn]:
+            for h in self.js8call.station_heard_by(station=stn, age=120):
                 if h in bloggers:
                     h_blog.append(h)
                 else:
@@ -96,19 +113,17 @@ class JS8modem:
                 tmp['blogger'] = True
             h_blog = []
             h_not = []
-            for h in self.js8call.station_heard_by(station=stn, age=120):
+            for h in self.js8call.station_hearing(station=stn, age=120):
                 if h in bloggers:
                     h_blog.append(h)
                 else:
                     h_not.append(h)
                 tmp['heard_blog'] = h_blog
                 tmp['heard_not'] = h_not
-
             allstn[stn] = tmp
 
         with open('tmp/js8.spots', 'wb') as f:
             pickle.dump(allstn, f)
-        print(self.js8call.station_hearing(age=120))
         print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, _grid, spot.offset,
                                                     time.strftime('%x %X', time.localtime(spot.timestamp))))
 

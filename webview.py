@@ -5,7 +5,7 @@ import db_functions
 import time
 from tcpModem import types
 
-target = "POSTS?"
+target = "POST?"
 app = Flask(__name__)
 
 

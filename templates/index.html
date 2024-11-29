@@ -280,10 +280,10 @@
     <form id="getblog-form">
         <input type="hidden" id="getblog" name="getblog" value="{{ target }}">
         <button class="getblog-btn" id="getblog-btn" type="submit" title="
-            {% if target == 'POSTS?' %}
+            {% if target == 'POST?' %}
                 Get Posts
             {% else %}
-                Get {{ target.strip('POSTS? ') }}'s Posts
+                Get {{ target.strip('POST? ') }}'s Posts
             {% endif %}
         "></button>
     </form>

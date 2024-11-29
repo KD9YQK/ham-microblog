@@ -58,11 +58,11 @@ class Daemon:
         except ConnectionRefusedError:
             print("TCP/IP ERROR - Unable to connect to TCP Server")
         except KeyboardInterrupt:
-            exit()
+            return
         try:
             loop.run_forever()
         except KeyboardInterrupt:
-            exit()
+            return
 
     def start_js8modem(self, host='127.0.0.1', port=2442):
         try:
@@ -74,7 +74,7 @@ class Daemon:
             print("JS8Call ERROR - JS8Call application not installed or connection issue")
             return
         except KeyboardInterrupt:
-            exit()
+            return
 
 
 if __name__ == "__main__":

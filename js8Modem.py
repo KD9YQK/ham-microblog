@@ -63,6 +63,9 @@ class JS8modem:
     ###########################################
     def _incoming_callback(self, msg):  # Test callback when any msg is received
         # print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
+        if '...' in msg.text:
+            print(f'JS8Call Incomplete MSG - {msg.text}')
+            return
         c = msg.text.split(' ')[0]
         if msg.destination in ['@BLOG', self.js8call.settings.get_station_callsign()]:
             if c == Command.GET_POSTS:
@@ -168,7 +171,7 @@ class JS8modem:
                 message = msg.text.split(f'{cut[2]} ')[1]
                 db_functions.add_blog(abc_to_num(cut[2]), cut[1], message)
         except KeyError:
-            print(f'Bad Timecode - {msg.text}')
+            print(f'JS8Call Bad Timecode - {msg.text}')
             return
 
     #  Broadcast out a new post.

@@ -27,7 +27,7 @@ In the terminal paste the following...
 ```
 git clone https://github.com/KD9YQK/ham-microblog.git
 cd ham-microblog
-python3 -m venv venv
+python -m venv venv
 ```
 
 ## Run Once to build DB and fill in initial settings

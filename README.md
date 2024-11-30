@@ -30,18 +30,6 @@ cd ham-microblog
 python3 -m venv venv
 ```
 
-Windows
-
-```
-venv\Scripts\pip install -r requirements.txt
-```
-
-Linux
-
-```
-venv/bin/pip3 install -r requirements.txt
-```
-
 ## Run Once to build DB and fill in initial settings
 This creates the database and builds the tables. It also asks a series of questions like callsign, which 'modems' to enable, and how time is displayed.
 
@@ -55,6 +43,7 @@ or you can run by clicking on the `setup.bat` script file.
 Linux
 
 ```
+venv/bin/pip3 install -r requirements.txt
 venv/bin/python3 setup.py
 ```
 

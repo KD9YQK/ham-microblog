@@ -18,6 +18,12 @@ THIS PROJECT IS A WIP AND NOT FULLY DEVELOPED!
 1) Switch the web frontend from flask to aiohttp to allow merging with the daemon.
 
 ## Install
+Windows users will need to install Python and Git before starting. Make sure during the python install to check the box to add to system PATH. JS8Call also needs to be in the system PATH as well. The easiest way to do this is re-install JS8Call and check the box to add to PATH.
+1) Python 3.9 or greater - https://www.python.org/downloads/
+2) Git for windows - https://gitforwindows.org/
+3) JS8Call - http://files.js8call.com/latest.html
+
+In the terminal paste the following...
 ```
 git clone https://github.com/KD9YQK/ham-microblog.git
 cd ham-microblog

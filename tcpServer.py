@@ -136,15 +136,20 @@ class tcpServer:
 
 
 if __name__ == '__main__':
-
+    print('')
+    print('#########################################')
+    print('#  Ham Microblog TCP/IP Server')
+    print('#  Bob KD9YQK - http://www.kd9yqk.com/')
+    print('#########################################')
     tcp = tcpServer()
     loop = asyncio.get_event_loop()
     coro = loop.create_server(tcp.ServerProtocol, port=8808)
     server = loop.run_until_complete(coro)
     aprs = loop.create_task(tcp.main())
 
-    for socket in server.sockets:
-        print("serving on {}".format(socket.getsockname()))
+    print("Serving on {}".format(server.sockets[0].getsockname()))
+    # for socket in server.sockets:
+    #    print("serving on {}".format(socket.getsockname()))
     try:
         loop.run_forever()
     except KeyboardInterrupt:

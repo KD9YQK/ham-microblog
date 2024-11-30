@@ -4,7 +4,8 @@ import tcpModem
 import asyncio
 import json
 import threading
-from aprsModem import get_aprs_pw
+from tcpAPRSIS import get_aprs_pw
+import aprsModem
 
 
 class Daemon:
@@ -78,6 +79,11 @@ class Daemon:
 
 
 if __name__ == "__main__":
+    print('')
+    print('#########################################')
+    print('#  Ham Microblog Daemon')
+    print('#  Bob KD9YQK - http://www.kd9yqk.com/')
+    print('#########################################')
     try:
         settings = db_functions.get_settings()
         daemon = Daemon()
@@ -89,7 +95,7 @@ if __name__ == "__main__":
         threads = []
         # JS8Call Modem Thread
         if settings['js8modem']:
-            threads.append(threading.Thread(target=daemon.start_js8modem(), args=()).start())
+            threads.append(threading.Thread(target=daemon.start_js8modem(settings['aprshost'], settings['aprsport']), args=()).start())
 
         # TCP Modem Thread
         if settings['tcpmodem']:
@@ -104,7 +110,8 @@ if __name__ == "__main__":
 
         # APRS Modem Thread
         if settings['aprsmodem']:
-            pass
+            aprs = aprsModem.Radio(settings['callsign'], settings['aprsssid'], settings['aprshost'], settings['aprsport'])
+            _loop.create_task(aprs.main())
         threads.append(threading.Thread(target=_loop.run_forever()).start())
     except KeyboardInterrupt:
         exit()

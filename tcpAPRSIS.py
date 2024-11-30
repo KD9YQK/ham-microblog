@@ -2,14 +2,12 @@
 import asyncio
 from ax253 import Frame
 import aprs
-
+from js8Modem import Command
 import db_functions
 
 aprs.__author__ = "KD9YQK"
 aprs.__distribution__ = "kiss3_async.py"
 aprs.__version__ = "1.00"
-
-import js8Modem
 
 
 def get_aprs_pw(callsign: str):
@@ -41,20 +39,20 @@ class igate_params:
     enabled = False
     tx_enabled = False
     filter_dist = "5000"
-    filter_params = "t/m"
+    filter_params = "t/mp"
     filter = ""
 
-    def set_igate_filter(self, _callsign=''):
-        # self.filter = f"{self.filter_params}/{callsign}/{self.filter_dist}"
-        self.filter = f"{self.filter_params}"  # /{self.filter_dist}"
+    def set_igate_filter(self, callsign=''):
+        self.filter = f"{self.filter_params}"  # /{callsign}"
 
 
 class APRSIS:
     MYCALL: str
     SSID: str
     PATH = ['WIDE1-1', 'WIDE2-1']
-    LAT = "4145.  N/"
-    LON = "08818.  W?"
+    LAT = "4145.  N"
+    LON = "08818.  W"
+    SYMBOL = "/?"
     COMMENT = 'Ham-Microblog Server https://github.com/KD9YQK/ham-microblog'
 
     tx_buffer = []
@@ -67,7 +65,7 @@ class APRSIS:
     def __init__(self, callsign="HAMBLG"):
         self.MYCALL = callsign
         self.ig.password = get_aprs_pw(callsign)
-        self.ig.set_igate_filter(_callsign=callsign)
+        self.ig.set_igate_filter(callsign=callsign)
 
     async def igate_rx(self, callback=None):
         while True:
@@ -98,13 +96,12 @@ class APRSIS:
             msg = {
                 'src': self.MYCALL,
                 'dest': 'ADZ666',
-                'info': f'={self.LAT}{self.LON}{self.COMMENT}'
+                'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]}{self.COMMENT}'
             }
             self.tx_buffer.append(msg)
             await asyncio.sleep(delay)
 
     async def setup(self, rx_callback=None):
-        print("Connecting to aprs-is")
         transport, self.igate_protocol = await aprs.create_aprsis_connection(
             host=self.ig.host,
             port=self.ig.port,
@@ -112,7 +109,7 @@ class APRSIS:
             passcode=self.ig.password,
             command=f'filter {self.ig.filter}',
         )
-        print('Connected!')
+        print(f'APRSIS Connected {transport.get_extra_info("peername")}')
         rx = asyncio.create_task(self.igate_rx(rx_callback))
         tx = asyncio.create_task(self.igate_tx(interval=1.0))
         return rx, tx
@@ -141,12 +138,12 @@ class APRSIS:
         tx_msg = {'src': target, 'info': f':{pad_callsign(callsign_ssid)}:ack{msgid}'}
         self.tx_buffer.append(tx_msg)
         cmd = msg.split(' ')[0]
-        if cmd == js8Modem.Command.GET_POSTS:
+        if cmd == Command.GET_POSTS:
             post = db_functions.get_callsign_blog(msg.split(' ')[1], 1)
-            tx_msg['info'] = f':{pad_callsign(callsign_ssid)}:{js8Modem.Command.POST} ' \
+            tx_msg['info'] = f':{pad_callsign(callsign_ssid)}:{Command.POST} ' \
                              f'{post["callsign"]} {post["time"]} {post["msg"]}'
             self.tx_buffer.append(tx_msg)
-        elif cmd == js8Modem.Command.POST:
+        elif cmd == Command.POST:
             try:
                 mtime = int(msg.split(' ')[1])
                 post = msg.split(str(mtime))[1].strip()
@@ -157,7 +154,6 @@ class APRSIS:
 
 if __name__ == "__main__":
     # print(get_aprs_pw('HAMBLG'))
-
 
     async def m():
         t: APRSIS = APRSIS('HAMBLG')

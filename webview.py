@@ -111,4 +111,10 @@ def getblog():
 
 
 if __name__ == "__main__":
+    print('')
+    print('#########################################')
+    print('#  Ham Microblog Web Frontend')
+    print('#  Bob KD9YQK - http://www.kd9yqk.com/')
+    print('#########################################')
+    print('')
     app.run(host="0.0.0.0")

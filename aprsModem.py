@@ -42,7 +42,7 @@ class Radio:
     SSID: str
     LAT = "4145.  N/"
     LON = "08818.  Wl"
-    COMMENT = 'Testing some code'
+    COMMENT = 'Ham-Microblog Client'
 
     KISS_HOST: str
     KISS_PORT: str

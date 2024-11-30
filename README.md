@@ -20,20 +20,20 @@ THIS PROJECT IS A WIP AND NOT FULLY DEVELOPED!
 ## Install
 ```
 git clone https://github.com/KD9YQK/ham-microblog.git
-python3 -m venv ham-microblog
 cd ham-microblog
+python3 -m venv venv
 ```
 
 Windows
 
 ```
-Scripts\pip install -r requirements.txt
+venv\Scripts\pip install -r requirements.txt
 ```
 
 Linux
 
 ```
-bin/pip3 install -r requirements.txt
+venv/bin/pip3 install -r requirements.txt
 ```
 
 ## Run Once to build DB and fill in initial settings
@@ -42,13 +42,14 @@ This creates the database and builds the tables. It also asks a series of questi
 Windows
 
 ```
-Scripts\python setup.py
+venv\Scripts\python setup.py
 ```
+or you can run by clicking on the `setup.bat` script file.
 
 Linux
 
 ```
-bin/python3 setup.py
+venv/bin/python3 setup.py
 ```
 
 ## Starting the Daemon
@@ -57,13 +58,14 @@ The daemon is what interfaces with JS8Call, and/or the TCP/IP Server. NOTE: JS8C
 Windows
 
 ```
-Scripts\python daemon.py
+venv\Scripts\python daemon.py
 ```
+or you can run by clicking on the `daemon.bat` script file.
 
 Linux
 
 ```
-bin/python3 daemon.py
+venv/bin/python3 daemon.py
 ```
 
 ## Starting the Web Frontend
@@ -72,13 +74,14 @@ The web frontend currently uses Flask, and due to it's 'blocking' nature, cannot
 Windows
 
 ```
-Scripts\python webview.py
+venv\Scripts\python webview.py
 ```
+or you can run by clicking on the `webview.bat` script file.
 
 Linux
 
 ```
-bin/python3 webview.py
+venv/bin/python3 webview.py
 ```
 
 Direct browser to http://localhost:5000

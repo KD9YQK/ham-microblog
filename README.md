@@ -27,13 +27,13 @@ cd ham-microblog
 Windows
 
 ```
-venv/Scripts/pip3 install pyjs8call flask aprs3 ax253 kiss3
+venv/Scripts/pip install -r requirements.txt
 ```
 
 Linux
 
 ```
-bin/pip3 install pyjs8call flask aprs3 ax253 kiss3
+bin/pip3 install -r requirements.txt
 ```
 
 ## Run Once to build DB and fill in initial settings

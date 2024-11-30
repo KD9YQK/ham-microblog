@@ -27,7 +27,7 @@ cd ham-microblog
 Windows
 
 ```
-venv/Scripts/pip3 install pyjs8call flask aprs3 ax253 kiss3
+Scripts\pip install pyjs8call flask aprs3 ax253 kiss3
 ```
 
 Linux
@@ -42,7 +42,7 @@ This creates the database and builds the tables. It also asks a series of questi
 Windows
 
 ```
-venv/Scripts/python3 setup.py
+Scripts\python setup.py
 ```
 
 Linux
@@ -57,7 +57,7 @@ The daemon is what interfaces with JS8Call, and/or the TCP/IP Server. NOTE: JS8C
 Windows
 
 ```
-venv/Scripts/python3 daemon.py
+Scripts\python3 daemon.py
 ```
 
 Linux
@@ -72,7 +72,7 @@ The web frontend currently uses Flask, and due to it's 'blocking' nature, cannot
 Windows
 
 ```
-venv/Scripts/python3 webview.py
+Scripts\python3 webview.py
 ```
 
 Linux

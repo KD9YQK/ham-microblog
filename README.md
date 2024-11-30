@@ -27,7 +27,7 @@ cd ham-microblog
 Windows
 
 ```
-venv/Scripts/pip install -r requirements.txt
+Scripts\pip install -r requirements.txt
 ```
 
 Linux
@@ -42,7 +42,7 @@ This creates the database and builds the tables. It also asks a series of questi
 Windows
 
 ```
-venv/Scripts/python3 setup.py
+Scripts\python setup.py
 ```
 
 Linux
@@ -57,7 +57,7 @@ The daemon is what interfaces with JS8Call, and/or the TCP/IP Server. NOTE: JS8C
 Windows
 
 ```
-venv/Scripts/python3 daemon.py
+Scripts\python daemon.py
 ```
 
 Linux
@@ -72,7 +72,7 @@ The web frontend currently uses Flask, and due to it's 'blocking' nature, cannot
 Windows
 
 ```
-venv/Scripts/python3 webview.py
+Scripts\python webview.py
 ```
 
 Linux

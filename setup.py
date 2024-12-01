@@ -56,6 +56,8 @@ if __name__ == '__main__':
     aprshost = '127.0.0.1'
     aprsport = 8001
     aprs_ssid = 15
+    lat = "4145.  N"
+    lon = "08818.  W"
     i = input("y/n (default:n)> ")
     if i.lower() in ['y', 'yes']:
         aprsmodem = True
@@ -84,7 +86,21 @@ if __name__ == '__main__':
                 aprs_ssid = int(i)
         except ValueError:
             print(f'  * Error - Not a valid number')
-        print(f'  * APRS SSID set to {aprs_ssid}')
+        print('Latitude')
+        i = input(f"example ({lat}))> ")
+        if i != '':
+            lat = i
+        else:
+            print(f'  * Error - Coordinates are required for APRS')
+            exit()
+        print('Longitude')
+        i = input(f"example ({lon}))> ")
+        if i != '':
+            lon = i
+        else:
+            print(f'  * Error - Coordinates are required for APRS')
+            exit()
+        print(f'  * Latitude/Longitude set to {lat}/{lon}')
     else:
         print('  * APRS Modem Disabled')
     print()
@@ -108,7 +124,6 @@ if __name__ == '__main__':
     else:
         print('  * Time will be displayed in GMT Time')
     db_functions.build_db()
-    db_functions.set_settings(callsign.upper(),js8modem, js8host, js8port, js8group, aprsmodem, aprshost, aprsport,
-                              aprs_ssid, tcpmodem, tm)
+    db_functions.set_settings(callsign.upper(), js8modem, js8host, js8port, js8group, aprsmodem, aprshost, aprsport,
+                              aprs_ssid, tcpmodem, tm, lat, lon)
     print('Setup Complete')
-

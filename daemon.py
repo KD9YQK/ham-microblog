@@ -143,6 +143,8 @@ if __name__ == "__main__":
         if settings['aprsmodem']:
             daemon.aprsmodem = aprsModem.Radio(settings['callsign'], settings['aprsssid'], settings['aprshost'],
                                                settings['aprsport'])
+            daemon.aprsmodem.LAT = settings['lat']
+            daemon.aprsmodem.LON = settings['lon']
             _loop.create_task(daemon.aprsmodem.main(daemon.rx_aprs_callback))
         threads.append(threading.Thread(target=_loop.run_forever()).start())
     except KeyboardInterrupt:

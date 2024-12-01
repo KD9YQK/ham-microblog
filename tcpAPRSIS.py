@@ -50,8 +50,8 @@ class APRSIS:
     SSID: str
     PATH = ['WIDE1-1', 'WIDE2-1']
     # LAT = "4145.  N"
-    LAT = "40.723282"
-    LON = "-74.0081519"
+    LAT = "4043.24N"
+    LON = "07400.22W"
     #LON = "08818.  W"
     SYMBOL = "/?"
     COMMENT = 'Ham-Microblog Server https://github.com/KD9YQK/ham-microblog'
@@ -64,7 +64,7 @@ class APRSIS:
     ig = igate_params()
 
     def __init__(self, callsign="HAMBLG"):
-        self.MYCALL = callsign
+        self.MYCALL = callsign + "-1"
         self.ig.password = get_aprs_pw(callsign)
         self.ig.set_igate_filter(callsign=callsign)
 
@@ -89,6 +89,7 @@ class APRSIS:
                     info=msg['info'],
                 )
                 self.igate_protocol.write(frame)
+                print(frame)
             await asyncio.sleep(interval)
 
     async def send_pos(self, delay=600):
@@ -97,7 +98,7 @@ class APRSIS:
             msg = {
                 'src': self.MYCALL,
                 'dest': 'ADZ666',
-                'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]}{self.COMMENT}'
+                'info': f'!{self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]} {self.COMMENT}'
             }
             self.tx_buffer.append(msg)
             await asyncio.sleep(delay)

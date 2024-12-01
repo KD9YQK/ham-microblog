@@ -301,6 +301,7 @@
         <button class="js8getblog-btn" id="js8getblog-btn" type="submit" title="{{ t }}"></button>
     </form>
     {% endif %}
+
     {% if settings['aprsmodem'] %}
         {% if target == 'POST?' %}
             {% set t = "APRS Get Posts" %}
@@ -311,7 +312,6 @@
             <input type="hidden" id="aprsgetblog" name="aprsgetblog" value="{{ target }}">
             <button class="aprsgetblog-btn" id="aprsgetblog-btn" type="submit" title="{{ t }}"></button>
         </form>
-        {% endif %}
     {% endif %}
 </div>
 <br>

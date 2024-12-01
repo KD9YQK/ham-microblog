@@ -64,7 +64,7 @@ class APRSIS:
     ig = igate_params()
 
     def __init__(self, callsign="HAMBLG"):
-        self.MYCALL = callsign + "-1"
+        self.MYCALL = callsign
         self.ig.password = get_aprs_pw(callsign)
         self.ig.set_igate_filter(callsign=callsign)
 

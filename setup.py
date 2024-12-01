@@ -56,8 +56,8 @@ if __name__ == '__main__':
     aprshost = '127.0.0.1'
     aprsport = 8001
     aprs_ssid = 15
-    lat = "4145.  N"
-    lon = "08818.  W"
+    lat = "40.723282"
+    lon = "-74.0081519"
     i = input("y/n (default:n)> ")
     if i.lower() in ['y', 'yes']:
         aprsmodem = True

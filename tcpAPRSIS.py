@@ -49,8 +49,10 @@ class APRSIS:
     MYCALL: str
     SSID: str
     PATH = ['WIDE1-1', 'WIDE2-1']
-    LAT = "4145.  N"
-    LON = "08818.  W"
+    # LAT = "4145.  N"
+    LAT = "40.723282"
+    LON = "-74.0081519"
+    #LON = "08818.  W"
     SYMBOL = "/?"
     COMMENT = 'Ham-Microblog Server https://github.com/KD9YQK/ham-microblog'
 

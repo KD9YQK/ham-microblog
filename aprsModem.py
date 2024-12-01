@@ -39,7 +39,7 @@ class Radio:
         while True:
             async for frame in self.kiss_protocol.read():
                 if callback:
-                    callback(frame)
+                    await callback(frame)
                 else:
                     print('Message Received')
                     print(frame)

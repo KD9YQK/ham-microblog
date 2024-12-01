@@ -293,12 +293,8 @@
     {% if settings['js8modem'] %}
     <form id="js8getblog-form">
         <input type="hidden" id="js8getblog" name="js8getblog" value="{{ target }}">
-        <button class="js8getblog-btn" id="js8getblog-btn" type="submit" title="JS8Call
-            {% if target == 'POST?' %}
-                Get Posts
-            {% else %}
-                Get {{ target.strip('POST? ') }}'s Posts
-            {% endif %}
+        <button class="js8getblog-btn" id="js8getblog-btn" type="submit"
+            title="JS8Call {% if target == 'POST?' %}Get Posts{% else %}Get {{ target.strip('POST? ') }}'s Posts{% endif %}
         "></button>
     </form>
     {% endif %}
@@ -307,12 +303,8 @@
         {% if c|length == 2 %}
         <form id="aprsgetblog-form">
             <input type="hidden" id="aprsgetblog" name="aprsgetblog" value="{{ target }}">
-            <button class="aprsgetblog-btn" id="aprsgetblog-btn" type="submit" title="APRS
-                {% if target == 'POST?' %}
-                    Get Posts
-                {% else %}
-                    Get {{ target.strip('POST? ') }}'s Posts
-                {% endif %}
+            <button class="aprsgetblog-btn" id="aprsgetblog-btn" type="submit"
+            title="APRS {% if target == 'POST?' %}Get Posts{% else %} Get {{ target.strip('POST? ') }}'s Posts{% endif %}
             "></button>
         </form>
         {% endif %}

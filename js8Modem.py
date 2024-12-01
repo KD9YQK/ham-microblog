@@ -194,7 +194,9 @@ class JS8modem:
         message = f"{Command.GET_POSTS}"
         self.js8call.send_directed_message(dest, message)
 
-    def get_posts_callsign(self, callsign: str, dest=settings['js8group']):
+    def get_posts_callsign(self, callsign: str, dest=""):
+        if dest == "":
+            dest = self.settings['js8group']
         message = f"{Command.GET_POSTS}"
         if len(callsign) > 0:
             message += f" {callsign.upper()}"

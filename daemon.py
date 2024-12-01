@@ -2,6 +2,7 @@ import ax253
 
 import db_functions
 import js8Modem
+from js8Modem import Command
 import tcpModem
 import asyncio
 import json
@@ -29,6 +30,10 @@ class Daemon:
                         tcp_msg['type'] = tcpModem.types.ADD_BLOG
                         tcp_msg['value'] = m
                         self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
+                    if self.settings['aprsmodem']:
+                        tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
+                                  'info': f':{pad_callsign("HAMBLG")}:{Command.POST} {m["time"]} {m["msg"]}'}
+                        self.aprsmodem.tx_buffer.append(tx_msg)
                 elif m["command"] == tcpModem.types.GET_ALL_MSGS:
                     if self.settings['js8modem']:
                         self.js8modem.get_posts()
@@ -61,7 +66,7 @@ class Daemon:
         msgid = ""
         cmd = msg.split(' ')[0]
 
-        if cmd == js8Modem.Command.POST:
+        if cmd == Command.POST:
             try:
                 mtime = int(msg.split(' ')[1])
                 post = msg.split(str(mtime))[1].strip()
@@ -72,17 +77,16 @@ class Daemon:
         if self.settings['callsign'] not in target:
             print(frame)
             return
-
+        tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
+                  'info': f':{pad_callsign(callsign_ssid)}:ack{msgid}'}
         if '{' in msg:
             msgid = msg.split('{')[1]
             msg = msg.split('{')[0]
-        tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
-                  'info': f':{pad_callsign(callsign_ssid)}:ack{msgid}'}
-        self.aprsmodem.tx_buffer.append(tx_msg)
+            self.aprsmodem.tx_buffer.append(tx_msg)
 
-        if cmd == js8Modem.Command.GET_POSTS:
+        if cmd == Command.GET_POSTS:
             post = db_functions.get_callsign_blog(msg.split(' ')[1], 1)
-            tx_msg['info'] = f':{pad_callsign(callsign_ssid)}:{js8Modem.Command.POST} ' \
+            tx_msg['info'] = f':{pad_callsign(callsign_ssid)}:{Command.POST} ' \
                              f'{post["callsign"]} {post["time"]} {post["msg"]}'
             self.aprsmodem.tx_buffer.append(tx_msg)
 

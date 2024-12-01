@@ -293,9 +293,12 @@
     {% if settings['js8modem'] %}
     <form id="js8getblog-form">
         <input type="hidden" id="js8getblog" name="js8getblog" value="{{ target }}">
-        <button class="js8getblog-btn" id="js8getblog-btn" type="submit"
-            title="JS8Call {% if target == 'POST?' %}Get Posts{% else %}Get {{ target.strip('POST? ') }}'s Posts{% endif %}
-        "></button>
+        {% if target == 'POST?' %}
+            {% set t = "JS8Call Get Posts" %}
+        {% else %}
+            {% set t = "Get " + target.strip('POST? ')[1] + "'s Posts" %}
+        {% endif %}
+        <button class="js8getblog-btn" id="js8getblog-btn" type="submit" title="{{ t }}"></button>
     </form>
     {% endif %}
     {% if settings['aprsmodem'] %}

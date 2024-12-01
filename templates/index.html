@@ -302,13 +302,14 @@
     </form>
     {% endif %}
     {% if settings['aprsmodem'] %}
-        {% set c = target.split() %}
-        {% if c|length == 2 %}
+        {% if target == 'POST?' %}
+            {% set t = "APRS Get Posts" %}
+        {% else %}
+            {% set t = "Get " + target.strip('POST? ')[1] + "'s Posts" %}
+        {% endif %}
         <form id="aprsgetblog-form">
             <input type="hidden" id="aprsgetblog" name="aprsgetblog" value="{{ target }}">
-            <button class="aprsgetblog-btn" id="aprsgetblog-btn" type="submit"
-            title="APRS {% if target == 'POST?' %}Get Posts{% else %} Get {{ target.strip('POST? ') }}'s Posts{% endif %}
-            "></button>
+            <button class="aprsgetblog-btn" id="aprsgetblog-btn" type="submit" title="{{ t }}"></button>
         </form>
         {% endif %}
     {% endif %}

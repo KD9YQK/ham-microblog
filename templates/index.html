@@ -296,7 +296,7 @@
         {% if target == 'POST?' %}
             {% set t = "JS8Call Get Posts" %}
         {% else %}
-            {% set t = "Get " + target.strip('POST? ')[1] + "'s Posts" %}
+            {% set t = "Get " + target.split('POST? ')[1] + "'s Posts" %}
         {% endif %}
         <button class="js8getblog-btn" id="js8getblog-btn" type="submit" title="{{ t }}"></button>
     </form>

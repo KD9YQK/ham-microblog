@@ -66,7 +66,7 @@ if __name__ == '__main__':
         i = input(f"(default:{aprshost})> ")
         if i == "":
             pass
-        elif i.split('.') == 4:
+        elif len(i.split('.')) == 4:
             aprshost = i
         else:
             print(f'  * Error - Cannot parse IP')

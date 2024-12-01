@@ -60,6 +60,7 @@ class Daemon:
 
 
     async def rx_aprs_callback(self, frame: ax253.Frame):
+        print(frame)
         frm = str(frame)
         callsign_ssid = str(frame.source)
         callsign = callsign_ssid

@@ -38,7 +38,7 @@ class igate_params:
     enabled = False
     tx_enabled = False
     filter_dist = "5000"
-    filter_params = "t/mp"
+    filter_params = "t/m"
     filter = ""
 
     def set_igate_filter(self, callsign=''):

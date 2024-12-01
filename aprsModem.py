@@ -33,7 +33,7 @@ class Radio:
         if ssid == 0:
             self.SSID = ''
         else:
-            ssid = f'-{ssid}'
+            self.SSID = f'-{ssid}'
 
     async def receiver(self, callback=None):
         while True:
@@ -62,13 +62,11 @@ class Radio:
             await asyncio.sleep(interval)
 
     async def send_pos(self, delay=600):
-        await asyncio.sleep(10)
+        await asyncio.sleep(2)
         while True:
-            msg = {
-                'src': f'{self.MYCALL}{self.SSID}',
-                'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]}{self.COMMENT}'
-            }
-            self.tx_buffer.append(msg)
+            m = {'src': f'{self.MYCALL}{self.SSID}', 'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]} {self.COMMENT}'}
+
+            self.tx_buffer.append(m)
             await asyncio.sleep(delay)
 
     async def setup(self, rx_callback=None):

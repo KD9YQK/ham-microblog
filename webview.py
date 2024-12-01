@@ -107,7 +107,6 @@ def getblog():
         db_functions.add_outgoing_post(types.GET_ALL_MSGS, 0, settings['js8group'], trgt)
     else:
         db_functions.add_outgoing_post(types.GET_CALLSIGN, 0, trgt.split(' ')[1], '')
-    print(request.form.get('getblog'))
     return "nothing"
 
 

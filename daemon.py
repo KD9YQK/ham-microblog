@@ -50,9 +50,14 @@ class Daemon:
                         tcp_msg['type'] = tcpModem.types.GET_CALLSIGN
                         tcp_msg['value'] = {'callsign': m['callsign']}
                         self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
+                    if self.settings['aprsmodem']:
+                        tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
+                                  'info': f':{pad_callsign("HAMBLG")}:{Command.GET_POSTS} {m["callsign"]}'}
+                        self.aprsmodem.tx_buffer.append(tx_msg)
                 elif m["command"] == tcpModem.types.GET_MSG_TARGET:
                     if self.settings['js8modem']:
                         self.js8modem.get_posts_callsign(dest=m['callsign'], callsign=m['msg'])
+
 
     async def rx_aprs_callback(self, frame: ax253.Frame):
         frm = str(frame)

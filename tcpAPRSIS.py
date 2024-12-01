@@ -27,7 +27,6 @@ def pad_callsign(callsign: str):
     retval = callsign
     for n in range(0, pad):
         retval += ' '
-    print(f'*{retval}*')
     return retval
 
 

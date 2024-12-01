@@ -41,6 +41,7 @@ class modClient(pyjs8call.Client):
 class JS8modem:
     js8call: pyjs8call.Client
     is_running = True
+    settings = {}
 
     def __init__(self, host='127.0.0.1', port=2442):
 
@@ -49,6 +50,11 @@ class JS8modem:
         self.js8call.callback.register_spots(self._new_spots_callback)
         print("* Js8Call Modem Initialized.")
         print(f"* Host: {host} * Port: {port}")
+        self.settings = db_functions.get_settings()
+        for i in ['@BLOG', self.settings['js8group']]:
+            if i not in self.js8call.settings.get_groups_list():
+                self.js8call.settings.add_group(i)
+                print(f'  * Added {i} to Group list.')
 
     def start(self):
         self.js8call.start()
@@ -67,7 +73,8 @@ class JS8modem:
             print(f'JS8Call Incomplete MSG - {msg.text}')
             return
         c = msg.text.split(' ')[0]
-        if msg.destination in ['@BLOG', self.js8call.settings.get_station_callsign()]:
+        if msg.destination in ['@BLOG', self.js8call.settings.get_station_callsign(), self.settings['js8group'],
+                               self.js8call.settings.get_groups_list()]:
             if c == Command.GET_POSTS:
                 self._get_posts(msg)
         if c == Command.POST:
@@ -175,15 +182,19 @@ class JS8modem:
             return
 
     #  Broadcast out a new post.
-    def broadcast_post(self, post: dict, dest='@BLOG'):
+    def broadcast_post(self, post: dict, dest=""):
+        if dest == "":
+            dest = self.settings['js8group']
         message = f"{Command.POST} {num_to_abc(post['time'])} {post['msg']}"
         self.js8call.send_directed_message(dest, message)
 
-    def get_posts(self, dest='@BLOG'):
+    def get_posts(self, dest=""):
+        if dest == "":
+            dest = self.settings['js8group']
         message = f"{Command.GET_POSTS}"
         self.js8call.send_directed_message(dest, message)
 
-    def get_posts_callsign(self, callsign: str, dest='@BLOG'):
+    def get_posts_callsign(self, callsign: str, dest=settings['js8group']):
         message = f"{Command.GET_POSTS}"
         if len(callsign) > 0:
             message += f" {callsign.upper()}"

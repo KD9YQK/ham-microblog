@@ -303,7 +303,8 @@
     </form>
     {% endif %}
     {% if settings['aprsmodem'] %}
-        {% if len(target).split() == 2 %}
+        {% set c = target.split() %}
+        {% if c|length == 2 %}
         <form id="aprsgetblog-form">
             <input type="hidden" id="aprsgetblog" name="aprsgetblog" value="{{ target }}">
             <button class="aprsgetblog-btn" id="aprsgetblog-btn" type="submit" title="APRS

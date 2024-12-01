@@ -52,7 +52,7 @@ class Radio:
                 frame = Frame.ui(
                     destination='ADZ666',
                     source=msg['src'],
-                    path=["WIDE2-1"],
+                    path=self.PATH,
                     info=msg['info'],
                 )
                 if self.tx_en:

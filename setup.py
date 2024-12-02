@@ -15,7 +15,7 @@ if __name__ == '__main__':
     print('Enable JS8Call Modem?')
     js8modem = False
     js8host = '127.0.0.1'
-    js8port = 8001
+    js8port = 2442
     js8group = '@BLOG'
     i = input("y/n (default:n)> ")
     if i.lower() in ['y', 'yes']:

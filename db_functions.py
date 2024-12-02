@@ -73,7 +73,6 @@ def get_outgoing_posts():
 
 
 def add_outgoing_post(command: str, mtime: int, callsign: str, msg: str):
-    purge_expired_blog()
     con, cur = get_db()
     cur.execute('''INSERT INTO outgoing (time, callsign, message, command) VALUES (?, ?, ?, ?)''',
                 (mtime, callsign, msg, command, ))
@@ -82,7 +81,6 @@ def add_outgoing_post(command: str, mtime: int, callsign: str, msg: str):
 
 
 def get_all_time(timecode: int):
-    purge_expired_blog()
     mon = get_monitoring()
     con, cur = get_db()
     rows = cur.execute('''SELECT time, message, callsign FROM blog WHERE time > ? ORDER BY time DESC''', (timecode,))
@@ -113,7 +111,6 @@ def get_bloggers():
 
 
 def get_callsign_blog(callsign: str, num: int = 1):
-    purge_expired_blog()
     mon = get_monitoring()
     con, cur = get_db()
     if num == 0:
@@ -140,7 +137,6 @@ def get_callsign_blog(callsign: str, num: int = 1):
 
 
 def get_all_blog():
-    purge_expired_blog()
     mon = get_monitoring()
     con, cur = get_db()
     rows = cur.execute('''SELECT time, message, callsign FROM blog ORDER BY time DESC''')
@@ -162,7 +158,6 @@ def get_all_blog():
 
 
 def get_monitoring_blog():
-    purge_expired_blog()
     mon = get_monitoring()
     con, cur = get_db()
 
@@ -192,7 +187,6 @@ def get_monitoring_blog():
 
 
 def add_blog(mtime: int, callsign: str, msg: str):
-    purge_expired_blog()
     con, cur = get_db()
     rows = cur.execute('''SELECT time, callsign FROM blog WHERE callsign = ? AND time = ?''',
                        (callsign, mtime,))
@@ -208,7 +202,6 @@ def add_blog(mtime: int, callsign: str, msg: str):
 
 
 def bulk_add_blog(posts: list):
-    purge_expired_blog()
     con, cur = get_db()
     for p in posts:
         mtime = p['time']
@@ -268,9 +261,19 @@ def purge_expired_blog():
 
 
 def get_db() -> tuple[sqlite3.Connection, sqlite3.Cursor]:
-    cur = sqlite3.connect("js8mb.db")
-    con = cur.cursor()
-    return cur, con
+    now = get_time()
+    con = sqlite3.connect("microblog.db")
+    cur = con.cursor()
+
+    try:
+        rows = cur.execute('''SELECT time, callsign FROM blog''')
+        for row in rows:
+            if expire + row[0] < now:
+                cur.execute("DELETE FROM blog WHERE (callsign = ? AND time = ?)", (row[1], row[0],))
+        con.commit()
+    except sqlite3.OperationalError:
+        pass
+    return con, cur
 
 
 def get_own_callsign():

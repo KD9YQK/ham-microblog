@@ -43,6 +43,7 @@ class tcpServer:
             post = db_functions.get_callsign_blog(msg.split(' ')[1], 1)
             tx_msg['info'] = f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:{Command.POST} ' \
                              f'{post["callsign"]} {post["time"]} {post["msg"]}'
+            print(tx_msg)
             self.aprs.tx_buffer.append(tx_msg)
         elif cmd == Command.POST:
             try:

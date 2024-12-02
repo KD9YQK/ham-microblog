@@ -48,7 +48,7 @@ class igate_params:
 class APRSIS:
     MYCALL: str
     SSID: str
-    PATH = ['WIDE1-1', 'WIDE2-1']
+    PATH = ['APRS', 'TCPIP']
     # LAT = "4145.  N"
     LAT = "4043.24N"
     LON = "07400.22W"

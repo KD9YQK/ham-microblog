@@ -102,13 +102,19 @@ def getjs8target():
 @app.route('/getblog', methods=['POST'])
 def getblog():
     trgt = request.form.get('getblog')
+    settings = db_functions.get_settings()
     if trgt == 'POST?':
-        db_functions.add_outgoing_post(types.GET_ALL_MSGS, 0, '@BLOG', trgt)
+        db_functions.add_outgoing_post(types.GET_ALL_MSGS, 0, settings['js8group'], trgt)
     else:
         db_functions.add_outgoing_post(types.GET_CALLSIGN, 0, trgt.split(' ')[1], '')
-    print(request.form.get('getblog'))
     return "nothing"
 
 
 if __name__ == "__main__":
+    print('')
+    print('#########################################')
+    print('#  Ham Microblog Web Frontend')
+    print('#  Bob KD9YQK - http://www.kd9yqk.com/')
+    print('#########################################')
+    print('')
     app.run(host="0.0.0.0")

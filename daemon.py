@@ -60,7 +60,7 @@ class Daemon:
 
 
     async def rx_aprs_callback(self, frame: ax253.Frame):
-        print(frame)
+        print(f'  R - {frame}')
         frm = str(frame)
         callsign_ssid = str(frame.source)
         callsign = callsign_ssid
@@ -81,7 +81,7 @@ class Daemon:
                 return
 
         if self.settings['callsign'] not in target:
-            print(frame)
+            print(f'  - {frame}')
             return
         tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
                   'info': f':{pad_callsign(callsign_ssid)}:ack{msgid}'}

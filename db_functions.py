@@ -196,7 +196,6 @@ def add_blog(mtime: int, callsign: str, msg: str):
     count = 0
     for _r in rows:
         count += 1
-    print(count)
     if count == 0:
         cur.execute('''INSERT INTO blog (time, callsign, message) VALUES (?, ?, ?)''',
                     (mtime, callsign, msg,))

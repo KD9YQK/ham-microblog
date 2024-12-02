@@ -79,6 +79,7 @@ class tcpServer:
                 self.process_buffer(s[0])
 
         def process_buffer(self, data):
+            print(data)
             try:
                 decoded = json.loads(data)
             except json.decoder.JSONDecodeError:

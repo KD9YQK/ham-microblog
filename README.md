@@ -7,12 +7,13 @@ THIS PROJECT IS A WIP AND NOT FULLY DEVELOPED!
 ### Working
 1) Web frontend powered by Flask
 2) js8call 'Modem'
-3) TCP/IP 'Modem'
-4) TCP/IP Server
+3) APRS 'Modem' via KISS TCP/IP
+4) TCP/IP 'Modem'
+5) TCP/IP Server
 
 ### WIP
 1) Add more functionality to js8call
-2) Add APRS and APRSIS support
+2) Add more APRS functionality to frontend.
 
 ### Feature Wishlist
 1) Switch the web frontend from flask to aiohttp to allow merging with the daemon.

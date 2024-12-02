@@ -11,7 +11,7 @@ def get_time():
 
 
 def build_db():
-    con, cur = get_db()
+    con, cur = get_db(err=False)
     cur.execute("DROP TABLE IF EXISTS blog")
     cur.execute("DROP TABLE IF EXISTS monitoring")
     cur.execute("DROP TABLE IF EXISTS settings")
@@ -263,7 +263,7 @@ def purge_expired_blog():
     con.close()
 
 
-def get_db() -> tuple[sqlite3.Connection, sqlite3.Cursor]:
+def get_db(err = True) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
     now = get_time()
     con = sqlite3.connect("microblog.db")
     cur = con.cursor()
@@ -275,8 +275,9 @@ def get_db() -> tuple[sqlite3.Connection, sqlite3.Cursor]:
                 cur.execute("DELETE FROM blog WHERE (callsign = ? AND time = ?)", (row[1], row[0],))
         con.commit()
     except sqlite3.OperationalError:
-        print("  * Error - Database doesn't exist or bad data. Run setup.py to fix")
-        exit()
+        if err:
+            print("  * Error - Database doesn't exist or bad data. Run setup.py to fix")
+            exit()
     return con, cur
 
 

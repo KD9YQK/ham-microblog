@@ -41,7 +41,7 @@ class tcpServer:
             post = db_functions.get_callsign_blog(msg.split(' ')[1], 1)
             if len(post) < 1:
                 tx_msg[
-                    'info'] = f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:No Posts available for {msg.split(' ')[1]}'
+                    'info'] = f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:No Posts available for {msg.split(" ")[1]}'
             else:
                 tx_msg['info'] = f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:{Command.POST} {post[0]["callsign"]} {post[0]["time"]} {post[0]["msg"]}'
             self.aprs.tx_buffer.append(tx_msg)

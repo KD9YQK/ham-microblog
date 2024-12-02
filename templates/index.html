@@ -355,8 +355,8 @@
                     {% set sh = "" %}
                     {% set hd = "display:none;" %}
                 {% else %}
-                    {% set sh = "" %}
-                    {% set hd = "display:none;" %}
+                    {% set sh = "display:none;" %}
+                    {% set hd = "" %}
                 {% endif %}
                 <form method="post" id="add_{{ post['callsign'] }}{{ post['time'] }}-form" class="add_{{ post['callsign'] }}" style="{{ sh }}">
                     <input type="hidden" value="{{ post['callsign'] }}" name="addmon{{ post['callsign'] }}{{ post['time'] }}" id="addmon{{ post['callsign'] }}{{ post['time'] }}">

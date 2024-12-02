@@ -182,7 +182,7 @@ def get_monitoring_blog():
             'msg': row[1],
             'mon': False
         }
-        if row[2] in mon:
+        if post['callsign'] in mon:
             post['mon'] = True
         retval.append(post)
     con.close()

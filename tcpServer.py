@@ -19,6 +19,7 @@ class tcpServer:
             await self.aprs.send_pos(600)
 
     async def aprs_rx_callback(self, frame: Frame):
+        print(f' * {frame}')
         frm = str(frame)
         callsign_ssid = str(frame.source)
         callsign = callsign_ssid

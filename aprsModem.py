@@ -81,12 +81,14 @@ class Radio:
             _pos = asyncio.create_task(self.send_pos())
         else:
             _pos = None
-        return _rec, _tx, _pos
+        return _rec, _tx, _pos, transport
 
     async def main(self, rx_callback=None):
-        _rec, _tx, _pos = await self.setup(rx_callback=rx_callback)
-        while True:
+        _rec, _tx, _pos, _transport = await self.setup(rx_callback=rx_callback)
+        while not _transport.is_closing():
             await asyncio.sleep(1)
+        print("bye")
+
 
 
 if __name__ == "__main__":

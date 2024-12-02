@@ -42,7 +42,7 @@ class igate_params:
     filter = ""
 
     def set_igate_filter(self, callsign=''):
-        self.filter = f"{self.filter_params}"  # /{callsign}"
+        self.filter = f"{self.filter_params}/{callsign}"
 
 
 class APRSIS:

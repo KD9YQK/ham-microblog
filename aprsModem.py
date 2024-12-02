@@ -16,7 +16,7 @@ class Radio:
     LAT = "4145.  N"
     LON = "08818.  W"
     SYMBOL = "/l"
-    COMMENT = 'Ham-Microblog Client'
+    COMMENT = 'Ham-Microblog Client https://github.com/KD9YQK/ham-microblog'
 
     KISS_HOST: str
     KISS_PORT: str

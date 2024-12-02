@@ -41,6 +41,7 @@ class tcpServer:
         print(cmd)
         if cmd == Command.GET_POSTS:
             post = db_functions.get_callsign_blog(msg.split(' ')[1], 1)
+            print(post)
             tx_msg['info'] = f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:{Command.POST} ' \
                              f'{post["callsign"]} {post["time"]} {post["msg"]}'
             print(tx_msg)

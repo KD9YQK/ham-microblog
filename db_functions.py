@@ -275,7 +275,8 @@ def get_db() -> tuple[sqlite3.Connection, sqlite3.Cursor]:
                 cur.execute("DELETE FROM blog WHERE (callsign = ? AND time = ?)", (row[1], row[0],))
         con.commit()
     except sqlite3.OperationalError:
-        pass
+        print("  * Error - Database doesn't exist or bad data. Run setup.py to fix")
+        exit()
     return con, cur
 
 

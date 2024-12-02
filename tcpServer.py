@@ -38,6 +38,7 @@ class tcpServer:
         tx_msg = {'src': target, 'info': f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:ack{msgid}'}
         # self.aprs.tx_buffer.append(tx_msg)
         cmd = msg.split(' ')[0]
+        print(cmd)
         if cmd == Command.GET_POSTS:
             post = db_functions.get_callsign_blog(msg.split(' ')[1], 1)
             tx_msg['info'] = f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:{Command.POST} ' \

@@ -58,19 +58,21 @@ class Daemon:
                     if self.settings['js8modem']:
                         self.js8modem.get_posts_callsign(dest=m['callsign'], callsign=m['msg'])
 
-
     async def rx_aprs_callback(self, frame: ax253.Frame):
-        print(f'  R - {frame}')
+        # return
         frm = str(frame)
         callsign_ssid = str(frame.source)
         callsign = callsign_ssid
         if '-' in callsign:
             callsign = callsign.split('-')[0]
-        frm = frm.split('::')[1]
-        target = frm.split(':')[0].strip()
-        msg = frm.split(':')[1]
-        msgid = ""
-        cmd = msg.split(' ')[0]
+        try:  # If it isn't a message, or parsing isnt correct.
+            frm = frm.split('::')[1]
+            target = frm.split(':')[0].strip()
+            msg = frm.split(':')[1]
+            msgid = ""
+            cmd = msg.split(' ')[0]
+        except:
+            return
 
         if cmd == Command.POST:
             try:
@@ -78,10 +80,12 @@ class Daemon:
                 post = msg.split(str(mtime))[1].strip()
                 db_functions.add_blog(mtime, callsign, post)
             except ValueError:
-                return
+                mtime = int(msg.split(' ')[2])
+                call = msg.split(' ')[1]
+                post = msg.split(str(mtime))[1].strip()
+                db_functions.add_blog(mtime, call, post)
 
         if self.settings['callsign'] not in target:
-            print(f'  - {frame}')
             return
         tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
                   'info': f':{pad_callsign(callsign_ssid)}:ack{msgid}'}

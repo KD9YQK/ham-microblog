@@ -58,7 +58,7 @@ class Radio:
                 if self.tx_en:
                     self.kiss_protocol.write(frame)
 
-                print(frame)
+                # print(frame)
             await asyncio.sleep(interval)
 
     async def send_pos(self, delay=600):

@@ -41,15 +41,18 @@ def build_db():
     table = """ CREATE TABLE settings (
                     id INT,
                     callsign VARCHAR(25), 
-                    js8modem BOOL, 
-                    aprsmodem BOOL, 
+                    js8modem BOOL, js8host VARCHAR(25), js8port INT, js8group VARCHAR(25), 
+                    aprsmodem BOOL, aprshost VARCHAR(25), aprsport INT, aprsssid INT, lat VARCHAR(25), lon VARCHAR(25), 
                     tcpmodem BOOL, 
                     timezone VARCHAR(25),
                     tcplast INT 
                 ); """
     cur.execute(table)
-    cur.execute(''' INSERT INTO settings ( id, callsign, js8modem, aprsmodem, tcpmodem, timezone, tcplast )
-                        VALUES (?, ?, ?, ?, ?, ?, ?);''', (0, 'MYCALL', False, False, False, 'gmt', 0,))
+    cur.execute(''' INSERT INTO settings ( id, callsign, js8modem, aprsmodem, tcpmodem, timezone, tcplast, 
+                        js8host, js8port, js8group, aprshost, aprsport, aprsssid, lat, lon)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+                (0, 'MYCALL', False, False, False, 'gmt', 0, '127.0.0.1', 2442, '@BLOG', '127.0.0.1', 8001, 9,
+                 "4145.  N", "08818.  W",))
     con.commit()
     con.close()
 
@@ -287,10 +290,17 @@ def get_own_callsign():
     return call
 
 
-def set_settings(callsign: str, js8modem=False, aprsmodem=False, tcpmodem=False, timezone='gmt'):
+def set_settings(callsign: str, js8modem=False, js8host='127.0.0.1', js8port=2442, js8group="@BLOG",
+                 aprsmodem=False, aprshost="127.0.0.1", aprsport=8001, aprs_ssid=9, tcpmodem=False, timezone='gmt',
+                 lat="", lon=""):
     con, cur = get_db()
-    cur.execute('''UPDATE settings SET callsign = ?, js8modem = ?, aprsmodem = ?, tcpmodem = ?, timezone = ? 
-                    WHERE id = ?;''', (callsign, js8modem, aprsmodem, tcpmodem, timezone, 0,))
+    cur.execute('''UPDATE settings 
+                    SET callsign = ?, js8modem = ?, aprsmodem = ?, tcpmodem = ?, timezone = ?,
+                        js8host = ?, js8port = ?, js8group = ?, 
+                        aprshost = ?, aprsport = ?, aprsssid = ?, lat = ?, lon = ? 
+                    WHERE id = ?;''',
+                (callsign, js8modem, aprsmodem, tcpmodem, timezone, js8host, js8port, js8group, aprshost,
+                 aprsport, aprs_ssid, lat, lon, 0,))
     con.commit()
     con.close()
 
@@ -315,9 +325,10 @@ def set_tcp_last():
 
 
 def get_settings():
-    con, cur = get_db()
-    row = cur.execute('''SELECT callsign, js8modem, aprsmodem, tcpmodem, timezone, tcplast 
-                            FROM settings WHERE (id = ?)''', (0,))
+    con, cur = get_db()  # js8host, js8port, js8group, aprshost, aprsport, aprsssid
+    row = cur.execute('''SELECT callsign, js8modem, aprsmodem, tcpmodem, timezone, tcplast,
+                            js8host, js8port, js8group, aprshost, aprsport, aprsssid, lat, lon
+                        FROM settings WHERE (id = ?)''', (0,))
     s = {}
     for r in row:
         s['callsign'] = r[0]
@@ -326,6 +337,15 @@ def get_settings():
         s['tcpmodem'] = r[3]
         s['timezone'] = r[4]
         s['tcplast'] = r[5]
+
+        s['js8host'] = r[6]
+        s['js8port'] = r[7]
+        s['js8group'] = r[8]
+        s['aprshost'] = r[9]
+        s['aprsport'] = r[10]
+        s['aprsssid'] = r[11]
+        s['lat'] = r[12]
+        s['lon'] = r[13]
     con.close()
     return s
 

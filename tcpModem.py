@@ -1,7 +1,7 @@
 import asyncio
 import json
 import db_functions
-from aprsModem import get_aprs_pw
+from tcpAPRSIS import get_aprs_pw
 
 clients = []
 

@@ -27,7 +27,7 @@ class tcpServer:
         frm = frm.split('::')[1]
         target = frm.split(':')[0].strip()
         if target != 'HAMBLG':
-            print(frame)
+            #print(frame)
             return
         msg = frm.split(':')[1]
         msgid = ""
@@ -35,12 +35,11 @@ class tcpServer:
             msgid = msg.split('{')[1]
             msg = msg.split('{')[0]
         tx_msg = {'src': target, 'info': f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:ack{msgid}'}
-        self.aprs.tx_buffer.append(tx_msg)
+        # self.aprs.tx_buffer.append(tx_msg)
         cmd = msg.split(' ')[0]
         if cmd == Command.GET_POSTS:
             post = db_functions.get_callsign_blog(msg.split(' ')[1], 1)
-            tx_msg['info'] = f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:{Command.POST} ' \
-                             f'{post["callsign"]} {post["time"]} {post["msg"]}'
+            tx_msg['info'] = f':{tcpAPRSIS.pad_callsign(callsign_ssid)}:{Command.POST} {post[0]["callsign"]} {post[0]["time"]} {post[0]["msg"]}'
             self.aprs.tx_buffer.append(tx_msg)
         elif cmd == Command.POST:
             try:
@@ -48,7 +47,10 @@ class tcpServer:
                 post = msg.split(str(mtime))[1].strip()
                 db_functions.add_blog(mtime, callsign, post)
             except ValueError:
-                return
+                mtime = int(msg.split(' ')[2])
+                call = msg.split(' ')[1]
+                post = msg.split(str(mtime))[1].strip()
+                db_functions.add_blog(mtime, call, post)
 
     class ServerProtocol(asyncio.Protocol):
         peername = None
@@ -62,7 +64,6 @@ class tcpServer:
             clients.append(self)
 
         def data_received(self, data):
-            print(data)
             # For manual telnet.
             if data == b'\r\n':
                 return
@@ -79,7 +80,6 @@ class tcpServer:
             except json.decoder.JSONDecodeError:
                 print('ERROR - JSONDecodeError')
                 retval = {"type": types.ERROR, "value": "JSONDecodeError"}
-                print(data)
                 self.send_self(json.dumps(retval).encode())
                 return
             ##################################
@@ -136,15 +136,20 @@ class tcpServer:
 
 
 if __name__ == '__main__':
-
+    print('')
+    print('#########################################')
+    print('#  Ham Microblog TCP/IP Server')
+    print('#  Bob KD9YQK - http://www.kd9yqk.com/')
+    print('#########################################')
     tcp = tcpServer()
     loop = asyncio.get_event_loop()
     coro = loop.create_server(tcp.ServerProtocol, port=8808)
     server = loop.run_until_complete(coro)
     aprs = loop.create_task(tcp.main())
 
-    for socket in server.sockets:
-        print("serving on {}".format(socket.getsockname()))
+    print("Serving on {}".format(server.sockets[0].getsockname()))
+    # for socket in server.sockets:
+    #    print("serving on {}".format(socket.getsockname()))
     try:
         loop.run_forever()
     except KeyboardInterrupt:

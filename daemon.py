@@ -1,15 +1,20 @@
+import ax253
+
 import db_functions
 import js8Modem
+from js8Modem import Command
 import tcpModem
 import asyncio
 import json
 import threading
-from aprsModem import get_aprs_pw
+from tcpAPRSIS import get_aprs_pw, pad_callsign
+import aprsModem
 
 
 class Daemon:
     tcpmodem: tcpModem.ClientProtocol
     js8modem: js8Modem.JS8modem
+    aprsmodem: aprsModem.Radio
     settings: dict
 
     async def process_outgoing(self):
@@ -25,6 +30,10 @@ class Daemon:
                         tcp_msg['type'] = tcpModem.types.ADD_BLOG
                         tcp_msg['value'] = m
                         self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
+                    if self.settings['aprsmodem']:
+                        tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
+                                  'info': f':{pad_callsign("HAMBLG")}:{Command.POST} {m["time"]} {m["msg"]}'}
+                        self.aprsmodem.tx_buffer.append(tx_msg)
                 elif m["command"] == tcpModem.types.GET_ALL_MSGS:
                     if self.settings['js8modem']:
                         self.js8modem.get_posts()
@@ -41,28 +50,55 @@ class Daemon:
                         tcp_msg['type'] = tcpModem.types.GET_CALLSIGN
                         tcp_msg['value'] = {'callsign': m['callsign']}
                         self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
+                    if self.settings['aprsmodem']:
+                        tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
+                                  'info': f':{pad_callsign("HAMBLG")}:{Command.GET_POSTS} {m["callsign"]}'}
+                        self.aprsmodem.tx_buffer.append(tx_msg)
                 elif m["command"] == tcpModem.types.GET_MSG_TARGET:
                     if self.settings['js8modem']:
                         self.js8modem.get_posts_callsign(dest=m['callsign'], callsign=m['msg'])
 
-    def start_tcpmodem(self, host='157.230.203.194', port=8808):
-        loop = asyncio.AbstractEventLoop()
-        try:
-            # loop = asyncio.get_event_loop()
-            coro = loop.create_connection(tcpModem.ClientProtocol, host=host, port=port)
-            _listen = loop.create_task(self.process_outgoing())
-            _server = loop.run_until_complete(coro)
-            self.tcpmodem = tcpModem.clients[0]
-            # data = {"type": tcpModem.types.GET_ALL_MSGS, "value": {"callsign": "KD9YQK"}}
-            # self.tcpmodem.send_msg(json.dumps(data).encode())
-        except ConnectionRefusedError:
-            print("TCP/IP ERROR - Unable to connect to TCP Server")
-        except KeyboardInterrupt:
+    async def rx_aprs_callback(self, frame: ax253.Frame):
+        # return
+        frm = str(frame)
+        callsign_ssid = str(frame.source)
+        callsign = callsign_ssid
+        if '-' in callsign:
+            callsign = callsign.split('-')[0]
+        try:  # If it isn't a message, or parsing isnt correct.
+            frm = frm.split('::')[1]
+            target = frm.split(':')[0].strip()
+            msg = frm.split(':')[1]
+            msgid = ""
+            cmd = msg.split(' ')[0]
+        except:
             return
-        try:
-            loop.run_forever()
-        except KeyboardInterrupt:
+
+        if cmd == Command.POST:
+            try:
+                mtime = int(msg.split(' ')[1])
+                post = msg.split(str(mtime))[1].strip()
+                db_functions.add_blog(mtime, callsign, post)
+            except ValueError:
+                mtime = int(msg.split(' ')[2])
+                call = msg.split(' ')[1]
+                post = msg.split(str(mtime))[1].strip()
+                db_functions.add_blog(mtime, call, post)
+
+        if self.settings['callsign'] not in target:
             return
+        tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
+                  'info': f':{pad_callsign(callsign_ssid)}:ack{msgid}'}
+        if '{' in msg:
+            msgid = msg.split('{')[1]
+            msg = msg.split('{')[0]
+            self.aprsmodem.tx_buffer.append(tx_msg)
+
+        if cmd == Command.GET_POSTS:
+            post = db_functions.get_callsign_blog(msg.split(' ')[1], 1)
+            tx_msg['info'] = f':{pad_callsign(callsign_ssid)}:{Command.POST} ' \
+                             f'{post["callsign"]} {post["time"]} {post["msg"]}'
+            self.aprsmodem.tx_buffer.append(tx_msg)
 
     def start_js8modem(self, host='127.0.0.1', port=2442):
         try:
@@ -78,6 +114,11 @@ class Daemon:
 
 
 if __name__ == "__main__":
+    print('')
+    print('#########################################')
+    print('#  Ham Microblog Daemon')
+    print('#  Bob KD9YQK - http://www.kd9yqk.com/')
+    print('#########################################')
     try:
         settings = db_functions.get_settings()
         daemon = Daemon()
@@ -89,7 +130,8 @@ if __name__ == "__main__":
         threads = []
         # JS8Call Modem Thread
         if settings['js8modem']:
-            threads.append(threading.Thread(target=daemon.start_js8modem(), args=()).start())
+            threads.append(threading.Thread(target=daemon.start_js8modem(settings['aprshost'], settings['aprsport']),
+                                            args=()).start())
 
         # TCP Modem Thread
         if settings['tcpmodem']:
@@ -104,7 +146,11 @@ if __name__ == "__main__":
 
         # APRS Modem Thread
         if settings['aprsmodem']:
-            pass
+            daemon.aprsmodem = aprsModem.Radio(settings['callsign'], settings['aprsssid'], settings['aprshost'],
+                                               settings['aprsport'])
+            daemon.aprsmodem.LAT = settings['lat']
+            daemon.aprsmodem.LON = settings['lon']
+            _loop.create_task(daemon.aprsmodem.main(daemon.rx_aprs_callback))
         threads.append(threading.Thread(target=_loop.run_forever()).start())
     except KeyboardInterrupt:
         exit()

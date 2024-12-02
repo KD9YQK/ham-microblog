@@ -11,15 +11,28 @@
           crossorigin="anonymous"></script>
 
     <script type="text/javascript">
-        $(document).on('submit','#getblog-form',function(e){
+        $(document).on('submit','#js8getblog-form',function(e){
           e.preventDefault();
           $.ajax({
             type:'POST',
             url:'/getblog',
-            data:{getblog:$("#getblog").val()},
+            data:{getblog:$("#js8getblog").val()},
             success:function(){
               alert('Post Request Msg added to the Outgoing Buffer. Please allow time for TX and RX before refreshing');
-              $('.getblog-btn').hide()
+              $('.js8getblog-btn').hide()
+            }
+          })
+        });
+
+        $(document).on('submit','#aprsgetblog-form',function(e){
+          e.preventDefault();
+          $.ajax({
+            type:'POST',
+            url:'/getblog',
+            data:{getblog:$("#aprsgetblog").val()},
+            success:function(){
+              alert('Post Request Msg added to the Outgoing Buffer. Please allow time for TX and RX before refreshing');
+              $('.aprsgetblog-btn').hide()
             }
           })
         });
@@ -277,16 +290,27 @@
 <br>
 <div class="page-title">
     <h1>{{ title }}</h1>
-    <form id="getblog-form">
-        <input type="hidden" id="getblog" name="getblog" value="{{ target }}">
-        <button class="getblog-btn" id="getblog-btn" type="submit" title="
-            {% if target == 'POST?' %}
-                Get Posts
-            {% else %}
-                Get {{ target.strip('POST? ') }}'s Posts
-            {% endif %}
-        "></button>
+    {% if settings['js8modem'] %}
+    <form id="js8getblog-form">
+        <input type="hidden" id="js8getblog" name="js8getblog" value="{{ target }}">
+        {% if target == 'POST?' %}
+            {% set t = "JS8Call Get Posts" %}
+        {% else %}
+            {% set t = "Get " + target.split('POST? ')[1] + "'s Posts" %}
+        {% endif %}
+        <button class="js8getblog-btn" id="js8getblog-btn" type="submit" title="{{ t }}"></button>
     </form>
+    {% endif %}
+
+    {% if settings['aprsmodem'] %}
+        {% if target != 'POST?' %}
+            {% set t = "APRS Get " + target.split('POST? ')[1] + "'s Posts" %}
+            <form id="aprsgetblog-form">
+                <input type="hidden" id="aprsgetblog" name="aprsgetblog" value="{{ target }}">
+                <button class="aprsgetblog-btn" id="aprsgetblog-btn" type="submit" title="{{ t }}"></button>
+            </form>
+        {% endif %}
+    {% endif %}
 </div>
 <br>
 <div class="post-container">

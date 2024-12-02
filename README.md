@@ -27,19 +27,7 @@ In the terminal paste the following...
 ```
 git clone https://github.com/KD9YQK/ham-microblog.git
 cd ham-microblog
-python3 -m venv venv
-```
-
-Windows
-
-```
-venv\Scripts\pip install -r requirements.txt
-```
-
-Linux
-
-```
-venv/bin/pip3 install -r requirements.txt
+python -m venv venv
 ```
 
 ## Run Once to build DB and fill in initial settings
@@ -55,6 +43,7 @@ or you can run by clicking on the `setup.bat` script file.
 Linux
 
 ```
+venv/bin/pip3 install -r requirements.txt
 venv/bin/python3 setup.py
 ```
 

@@ -26,8 +26,17 @@ body{
 }
 
 
-.page-title .getblog-btn{
+.page-title .js8getblog-btn{
     background: url('../img/radio_icon.png');
+    width:32px;
+    height:32px;
+    border:none;
+    background-size: 100% 100%;
+}
+
+
+.page-title .aprsgetblog-btn{
+    background: url('../img/tower_icon.png');
     width:32px;
     height:32px;
     border:none;

@@ -9,39 +9,13 @@ aprs.__distribution__ = "kiss3_async.py"
 aprs.__version__ = "1.00"
 
 
-def get_aprs_pw(callsign: str):
-    cs = callsign.upper()
-    i = 0
-    tmp_code = 29666
-    while i < len(cs):
-        tmp_code = tmp_code ^ ord(cs[i]) * 256
-        tmp_code = tmp_code ^ ord(cs[i+1])
-        i += 2
-    tmp_code = tmp_code & 32767
-    return tmp_code
-
-
-class igate_params:
-    # host = "noam.aprs2.net"
-    host = '205.209.228.99'
-    port = 14580
-    password = ""
-    enabled = False
-    tx_enabled = False
-    filter_dist = "5000"
-    filter_params = "t/m"
-    filter = ""
-
-    def set_igate_filter(self, _callsign=''):
-        # self.filter = f"{self.filter_params}/{callsign}/{self.filter_dist}"
-        self.filter = f"{self.filter_params}"#/{self.filter_dist}"
-
-
 class Radio:
     MYCALL: str
     SSID: str
-    LAT = "4145.  N/"
-    LON = "08818.  Wl"
+    PATH = ["WIDE1-1", "WIDE2-1"]
+    LAT = "4145.  N"
+    LON = "08818.  W"
+    SYMBOL = "/l"
     COMMENT = 'Ham-Microblog Client'
 
     KISS_HOST: str
@@ -52,34 +26,20 @@ class Radio:
     tx_en = True
     pos_enabled = True
 
-    igate_protocol = None
-    ig = igate_params()
-
-    def __init__(self, callsign="MYCALL", host="localhost", port="8001", igate_pass=""):
+    def __init__(self, callsign="MYCALL", ssid=0, host="localhost", port="8001"):
         self.MYCALL = callsign
         self.KISS_HOST = host
         self.KISS_PORT = port
-        self.ig.password = igate_pass
-        self.ig.set_igate_filter(_callsign=callsign)
-        if igate_pass == "":
-            self.ig.enabled = False
+        if ssid == 0:
+            self.SSID = ''
         else:
-            self.ig.enabled = True
-
-    async def igate_rec(self, callback=None):
-        while True:
-            async for frame in self.igate_protocol.read():
-                if callback:
-                    callback(frame)
-                else:
-                    print("igate")
-                    print(frame)
+            self.SSID = f'-{ssid}'
 
     async def receiver(self, callback=None):
         while True:
             async for frame in self.kiss_protocol.read():
                 if callback:
-                    callback(frame)
+                    await callback(frame)
                 else:
                     print('Message Received')
                     print(frame)
@@ -90,77 +50,45 @@ class Radio:
                 msg = self.tx_buffer[0]
                 self.tx_buffer.pop(0)
                 frame = Frame.ui(
-                    destination=msg['dest'],
+                    destination='ADZ666',
                     source=msg['src'],
-                    path=["WIDE2-1"],
+                    path=self.PATH,
                     info=msg['info'],
                 )
                 if self.tx_en:
                     self.kiss_protocol.write(frame)
 
-                if self.ig.enabled and self.ig.tx_enabled:
-                    self.igate_protocol.write(frame)
-                print('')
-                print(frame)
-                print('Command>>', flush=False)
+                # print(frame)
             await asyncio.sleep(interval)
 
     async def send_pos(self, delay=600):
-        await asyncio.sleep(10)
+        await asyncio.sleep(2)
         while True:
-            msg = {
-                'src': 'KD9YQK-10',
-                'dest': 'WIDE1-1',
-                'info': f'={self.LAT}{self.LON}{self.COMMENT}'
-            }
-            self.tx_buffer.append(msg)
+            m = {'src': f'{self.MYCALL}{self.SSID}', 'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]} {self.COMMENT}'}
+
+            self.tx_buffer.append(m)
             await asyncio.sleep(delay)
 
-    async def setup(self, rx_callback=None, igrx_callback=None):
-        print(f'Connecting to Direwolf {self.KISS_HOST}:{self.KISS_PORT}')
+    async def setup(self, rx_callback=None):
         transport, self.kiss_protocol = await kiss.create_tcp_connection(
             host=self.KISS_HOST,
             port=self.KISS_PORT,
         )
-        print('Connected!')
-        if self.ig.enabled:
-            print("Connecting to aprs-is")
-            transport, self.igate_protocol = await aprs.create_aprsis_connection(
-                host=self.ig.host,
-                port=self.ig.port,
-                user=self.MYCALL,
-                passcode=self.ig.password,
-                command=f'filter {self.ig.filter}',
-            )
-            print('Connected!')
-            _rec = asyncio.create_task(self.receiver(rx_callback))
-            _tx = asyncio.create_task(self.transmitter(interval=1.0))
-            if self.ig.enabled:
-                _ig = asyncio.create_task(self.igate_rec(igrx_callback))
-            else:
-                _ig = None
-            if self.pos_enabled:
-                _pos = asyncio.create_task(self.send_pos())
-            else:
-                _pos = None
-            return _rec, _tx, _ig, _pos
+        print(f'Direwolf Connected {transport.get_extra_info("peername")}')
+        _rec = asyncio.create_task(self.receiver(rx_callback))
+        _tx = asyncio.create_task(self.transmitter(interval=1.0))
+        if self.pos_enabled:
+            _pos = asyncio.create_task(self.send_pos())
+        else:
+            _pos = None
+        return _rec, _tx, _pos
 
-    async def main(self):
-        _rec, _tx, _ig, _pos = await self.setup()
-        c = 590
+    async def main(self, rx_callback=None):
+        _rec, _tx, _pos = await self.setup(rx_callback=rx_callback)
         while True:
             await asyncio.sleep(1)
-            c += 1
-            if c == 600:
-                c = 0
-                msg = {
-                    'src': 'KD9YQK-10',
-                    'dest': 'ADZ666',  # TEST
-                    'info': f'={self.LAT}N/08818.  Wl Testing some python code'
-                }
-                self.tx_buffer.append(msg)
-                print(self.tx_buffer)
-                print("Message Sent")
+
 
 if __name__ == "__main__":
-    print(get_aprs_pw('KD9YQK'))
+    t = Radio(callsign='KD9YQK', host='192.168.1.103')
+    asyncio.run(t.main())

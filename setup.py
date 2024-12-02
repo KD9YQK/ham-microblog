@@ -1,67 +1,129 @@
 import db_functions
 
 if __name__ == '__main__':
+    print('')
+    print('#########################################')
+    print('#  Ham Microblog Setup')
+    print('#  Bob KD9YQK - http://www.kd9yqk.com/')
+    print('#########################################')
     print()
     print('What is your callsign?')
     callsign = input("> ")
-    print(f'Welcome {callsign}!')
+    print(f'  * Welcome {callsign.upper()}!')
     print()
+
     print('Enable JS8Call Modem?')
-    j = input("y/n (default:n)> ")
-    if j.lower() in ['y', 'yes']:
-        j = True
-        print('JS8Call Modem Enabled')
+    js8modem = False
+    js8host = '127.0.0.1'
+    js8port = 8001
+    js8group = '@BLOG'
+    i = input("y/n (default:n)> ")
+    if i.lower() in ['y', 'yes']:
+        js8modem = True
+        print('  * JS8Call Modem Enabled')
+        print('JS8Call TCP Address?')
+        i = input(f"(default:{js8host})> ")
+        if i == "":
+            pass
+        elif i.split('.') == 4:
+            js8host = i
+        else:
+            print(f'  * Error - Cannot parse IP')
+        print(f'  * JS8Call IP set to {js8host}')
+        print('JS8Call TCP Port?')
+        i = input(f"(default:{js8port})> ")
+        try:
+            if i != '':
+                js8port = int(i)
+        except ValueError:
+            print(f'  * Error - Not a valid number')
+        print(f'  * JS8Call Port set to {js8port}')
+        print('JS8Call Target Group?')
+        i = input(f"(default:{js8group})> ")
+        if i == "":
+            pass
+        elif i[:1] != "@":
+            print(f'  * Error - Not a valid group name')
+        else:
+            js8group = i.upper()
+        print(f'  * JS8Call Group set to {js8group}')
     else:
-        j = False
-        print('JS8Call Modem Disabled')
+        print('  * JS8Call Modem Disabled')
     print()
+
     print('Enable APRS Modem?')
-    a = input("y/n (default:n)> ")
-    if a.lower() in ['y', 'yes']:
-        a = True
-        print('APRS Modem Enabled')
+    aprsmodem = False
+    aprshost = '127.0.0.1'
+    aprsport = 8001
+    aprs_ssid = 15
+    lat = "4043.24N"
+    lon = "07400.22W"
+    i = input("y/n (default:n)> ")
+    if i.lower() in ['y', 'yes']:
+        aprsmodem = True
+        print('  * APRS Modem Enabled')
+        print('APRS TCP Address?')
+        i = input(f"(default:{aprshost})> ")
+        if i == "":
+            pass
+        elif len(i.split('.')) == 4:
+            aprshost = i
+        else:
+            print(f'  * Error - Cannot parse IP')
+        print(f'  * APRS IP set to {aprshost}')
+        print('APRS TCP Port?')
+        i = input(f"(default:{aprsport})> ")
+        try:
+            if i != '':
+                aprsport = int(i)
+        except ValueError:
+            print(f'  * Error - Not a valid number')
+        print(f'  * APRS Port set to {aprsport}')
+        print('APRS SSID?')
+        i = input(f"0-15 (default:{aprs_ssid})> ")
+        try:
+            if i != '':
+                aprs_ssid = int(i)
+        except ValueError:
+            print(f'  * Error - Not a valid number')
+        print('Latitude DDMM.SSN')
+        i = input(f"example ({lat}))> ")
+        if i != '':
+            lat = i
+        else:
+            print(f'  * Error - Coordinates are required for APRS')
+            exit()
+        print('Longitude 0DDMM.SSW')
+        i = input(f"example ({lon}))> ")
+        if i != '':
+            lon = i
+        else:
+            print(f'  * Error - Coordinates are required for APRS')
+            exit()
+        print(f'  * Latitude/Longitude set to {lat}/{lon}')
     else:
-        a = False
-        print('APRS Modem Disabled')
+        print('  * APRS Modem Disabled')
     print()
+
     print('Enable TCP/IP Modem?')
-    t = input("y/n (default:n)> ")
-    if t.lower() in ['y', 'yes']:
-        t = True
-        print('TCP/IP Modem Enabled')
+    tcpmodem = False
+    i = input("y/n (default:n)> ")
+    if i.lower() in ['y', 'yes']:
+        tcpmodem = True
+        print('  * TCP/IP Modem Enabled')
     else:
-        t = False
-        print('TCP/IP Modem Disabled')
+        print('  * TCP/IP Modem Disabled')
     print()
+
     print('How should we display time?\n1:GMT\n2:Local')
-    tm = input("1-2 (default:1)> ")
-    if tm == '2':
+    i = input("1-2 (default:1)> ")
+    tm = 'gmt'
+    if i == '2':
         tm = 'local'
-        print('Time will be displayed in Local Time')
+        print('  * Time will be displayed in Local Time')
     else:
-        tm = 'gmt'
-        print('Time will be displayed in GMT Time')
+        print('  * Time will be displayed in GMT Time')
     db_functions.build_db()
-    db_functions.set_settings(callsign.upper(), j, a, t, tm)
+    db_functions.set_settings(callsign.upper(), js8modem, js8host, js8port, js8group, aprsmodem, aprshost, aprsport,
+                              aprs_ssid, tcpmodem, tm, lat, lon)
     print('Setup Complete')
-
-    exit()
-
-    t = db_functions.get_time()
-    db_functions.add_blog(t, "KD9YQK",
-                          "Today a man knocked on my door and asked for a small donation towards the local swimming "
-                          "pool. I gave him a glass of water.")
-    db_functions.add_blog(t - 100, "KD9YQK",
-                          "Ham and Eggs: A day's work for a chicken, a lifetime commitment for a pig.")
-    db_functions.add_blog(t - 150, "KD9UEG",
-                          "What do you call a dog with no legs? Doesn't matter what you call him, he's not coming.")
-    db_functions.add_blog(t - 1150, "KD9UEG", "Always identify who to blame in an emergency.")
-    db_functions.add_blog(t - 140, "KM6LYW",
-                          "My wife just found out I replaced our bed with a trampoline; she hit the roof.")
-    db_functions.add_blog(t - 340, "KM6LYW",
-                          "Smoking will kill you... Bacon will kill you... But, smoking bacon will cure it.")
-    db_functions.add_blog(t - 1250, "KD9YQK", "A liberal is just a conservative that hasn't been mugged yet.")
-    l = []
-    for i in range(0, 5000):
-        l.append({"time": t - 200 - i, "callsign": "KD9YQK", "msg": f"Test Message #{str(i + 1)}"})
-    db_functions.bulk_add_blog(l)

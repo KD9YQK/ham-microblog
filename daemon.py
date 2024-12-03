@@ -7,6 +7,7 @@ import asyncio
 import json
 from tcpAPRSIS import get_aprs_pw, pad_callsign
 import aprsModem
+import threading
 
 
 class Daemon:
@@ -16,10 +17,12 @@ class Daemon:
     settings: dict
 
     async def process_outgoing(self):
-        if len(tcpModem.clients) > 0:
-            self.tcpmodem = tcpModem.clients[0]
+
         while True:
+            if len(tcpModem.clients) > 0:
+                self.tcpmodem = tcpModem.clients[0]
             await asyncio.sleep(1)
+            print('process')
             msgs = db_functions.get_outgoing_posts()
             for m in msgs:
                 tcp_msg = {'call': self.settings['callsign'], 'id': get_aprs_pw(self.settings['callsign'])}
@@ -137,7 +140,10 @@ if __name__ == "__main__":
         threads = []
         # JS8Call Modem Thread
         if settings['js8modem']:
-            # threads.append(threading.Thread(target=daemon.start_js8modem(settings['js8host'], settings['js8port']),
+            #blk = asyncio.to_thread(daemon.start_js8modem, settings['js8host'], settings['js8port'])
+            #_loop.create_task(blk)
+
+            #threads.append(threading.Thread(target=daemon.start_js8modem(settings['js8host'], settings['js8port']),
             #                                args=()).start())
             _js8 = _loop.create_task(daemon.start_js8modem(settings['js8host'], settings['js8port']))
 
@@ -160,7 +166,7 @@ if __name__ == "__main__":
             daemon.aprsmodem.LAT = settings['lat']
             daemon.aprsmodem.LON = settings['lon']
             _a = _loop.create_task(daemon.aprsmodem.main(daemon.rx_aprs_callback))
-        # threads.append(threading.Thread(target=_loop.run_forever()).start())
-        _loop.run_forever()
+        threads.append(threading.Thread(target=_loop.run_forever()).start())
+        #_loop.run_forever()
     except KeyboardInterrupt:
         exit()

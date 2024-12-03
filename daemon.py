@@ -124,7 +124,7 @@ if __name__ == "__main__":
     print('')
     print('#########################################')
     print('#  Ham Microblog Daemon')
-    print('#  Bob KD9YQK - http://www.kd9yqk.com/')
+    print('#  Bob KD9YQK - https://www.kd9yqk.com/')
     print('#########################################')
     try:
         settings = db_functions.get_settings()

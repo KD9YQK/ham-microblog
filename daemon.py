@@ -22,7 +22,6 @@ class Daemon:
             if len(tcpModem.clients) > 0:
                 self.tcpmodem = tcpModem.clients[0]
             await asyncio.sleep(1)
-            print('process')
             msgs = db_functions.get_outgoing_posts()
             for m in msgs:
                 tcp_msg = {'call': self.settings['callsign'], 'id': get_aprs_pw(self.settings['callsign'])}
@@ -166,7 +165,7 @@ if __name__ == "__main__":
             daemon.aprsmodem.LAT = settings['lat']
             daemon.aprsmodem.LON = settings['lon']
             _a = _loop.create_task(daemon.aprsmodem.main(daemon.rx_aprs_callback))
-        threads.append(threading.Thread(target=_loop.run_forever()).start())
-        #_loop.run_forever()
+        #threads.append(threading.Thread(target=_loop.run_forever()).start())
+        _loop.run_forever()
     except KeyboardInterrupt:
         exit()

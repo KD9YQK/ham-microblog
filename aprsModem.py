@@ -20,7 +20,7 @@ class Radio:
 
     KISS_HOST: str
     KISS_PORT: str
-    kiss_protocol: kiss.KISSProtocol
+    kiss_protocol: kiss.KISSProtocol = None
 
     tx_buffer = []
     tx_en = True
@@ -70,24 +70,34 @@ class Radio:
             await asyncio.sleep(delay)
 
     async def setup(self, rx_callback=None):
-        transport, self.kiss_protocol = await kiss.create_tcp_connection(
-            host=self.KISS_HOST,
-            port=self.KISS_PORT,
-        )
-        print(f'Direwolf Connected {transport.get_extra_info("peername")}')
-        _rec = asyncio.create_task(self.receiver(rx_callback))
-        _tx = asyncio.create_task(self.transmitter(interval=1.0))
+        _loop = asyncio.get_event_loop()
+
+
+        _rec = _loop.create_task(self.receiver(rx_callback))
+        _tx = _loop.create_task(self.transmitter(interval=1.0))
         if self.pos_enabled:
-            _pos = asyncio.create_task(self.send_pos())
+            _pos = _loop.create_task(self.send_pos())
         else:
             _pos = None
-        return _rec, _tx, _pos, transport
+        return _rec, _tx, _pos
 
     async def main(self, rx_callback=None):
-        _rec, _tx, _pos, _transport = await self.setup(rx_callback=rx_callback)
-        while not _transport.is_closing():
+        _rec, _tx, _pos = await self.setup(rx_callback=rx_callback)
+        while True:
             await asyncio.sleep(1)
-        print("bye")
+            if self.kiss_protocol is None or self.kiss_protocol.transport.is_closing():
+                try:
+                    transport, self.kiss_protocol = await kiss.create_tcp_connection(
+                        host=self.KISS_HOST,
+                        port=self.KISS_PORT
+                    )
+                    print(f'  * APRS -  Connected {transport.get_extra_info("peername")}')
+                    while not transport.is_closing():
+                        await asyncio.sleep(1)
+                    print(f'  * APRS -  Disconnected {transport.get_extra_info("peername")}')
+                except ConnectionRefusedError:
+                    #print('  * APRS - Attempting to reconnecting in 15 seconds')
+                    await asyncio.sleep(5)
 
 
 

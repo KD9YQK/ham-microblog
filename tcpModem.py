@@ -22,7 +22,7 @@ class ClientProtocol(asyncio.Protocol):
     def connection_made(self, transport):
         self.transport = transport
         self.peername = transport.get_extra_info("peername")
-        print("TCP/IP connection_made: {}".format(self.peername))
+        print("  * TCP/IP - Connected {}".format(self.peername))
         clients.append(self)
         s = db_functions.get_settings()
         blog = db_functions.get_all_time(s['tcplast'])
@@ -50,7 +50,7 @@ class ClientProtocol(asyncio.Protocol):
             decoded = json.loads(data)
         except json.decoder.JSONDecodeError:
             print('##########################')
-            print('TCP/IP ERROR - JSONDecodeError')
+            print('  * TCP/IP - ERROR JSONDecodeError')
             print(data)
             print("###########################")
             return
@@ -73,14 +73,34 @@ class ClientProtocol(asyncio.Protocol):
         client.transport.write(b'<EOF>')
 
     def connection_lost(self, ex):
-        print("TCP/IP connection_lost: {}".format(self.peername))
+        print("  * TCP/IP - Disconnected {}".format(self.peername))
         clients.remove(self)
+
+
+client_tcp: (asyncio.BaseTransport, asyncio.BaseProtocol) = None
+
+
+async def do_connect():
+    _loop = asyncio.get_event_loop()
+    while True:
+        if len(clients) > 0:
+            await asyncio.sleep(1)
+            continue
+        try:
+
+            _client_tcp = await _loop.create_connection(ClientProtocol, '157.230.203.194', 8808)
+        except OSError:
+            #print("  * TCP/IP - Server not up retrying in 30 seconds...")
+            await asyncio.sleep(5)
+        else:
+            await asyncio.sleep(1)
+            # break
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    coro = loop.create_connection(ClientProtocol, host="157.230.203.194", port=8888)
-    server = loop.run_until_complete(coro)
+    # coro = loop.create_connection(do_connect(host="157.230.203.194", port=8888))
+    server = loop.run_until_complete(do_connect())
 
     try:
         loop.run_forever()

@@ -95,6 +95,8 @@ class Daemon:
             target = frm.split(':')[0].strip()
             msg = frm.split(':')[1]
             cmd = msg.split(' ')[0]
+        except IndexError:
+            return
         except Exception as e:
             print(f'  * APRS - ERROR - {e}')
             return

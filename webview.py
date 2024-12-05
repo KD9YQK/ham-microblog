@@ -1,11 +1,13 @@
 import pickle
-
 from quart import Quart, render_template, request
 import db_functions
 import time
+
+from js8Modem import Command
 from tcpModem import types
 
-target = "POST?"
+
+target = Command.GET_POSTS
 app = Quart(__name__)
 
 

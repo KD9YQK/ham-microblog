@@ -1,12 +1,12 @@
 # ham-microblog
-An attempt at implementing a micro-blog into js8call and APRS via API
+An attempt at implementing a micro-blog into JS8Call and APRS
 
 ## Current State
-THIS PROJECT IS A WIP AND NOT FULLY DEVELOPED!
+The project is in a functional state and is currently in testing.
 
 ### Working
-1) Web frontend powered by Flask
-2) js8call 'Modem'
+1) Web GUI powered by Quart
+2) JS88Call 'Modem'
 3) APRS 'Modem' via KISS TCP/IP
 4) TCP/IP 'Modem'
 5) TCP/IP Server
@@ -14,9 +14,11 @@ THIS PROJECT IS A WIP AND NOT FULLY DEVELOPED!
 ### WIP
 1) Add more functionality to js8call
 2) Add more APRS functionality to frontend.
+3) Add Serial KISS capabilities for TNCs
+4) Create CLI Client for use with packet nodes.
 
 ### Feature Wishlist
-1) Switch the web frontend from flask to aiohttp to allow merging with the daemon.
+1) Adapt to VaraHF Modem
 
 ## Install
 Windows users will need to install Python and Git before starting. Make sure during the python install to check the box to add to system PATH. JS8Call also needs to be in the system PATH as well. The easiest way to do this is re-install JS8Call and check the box to add to PATH.
@@ -62,22 +64,6 @@ Linux
 
 ```
 venv/bin/python3 daemon.py
-```
-
-## Starting the Web Frontend
-The web frontend currently uses Flask, and due to it's 'blocking' nature, cannot be run in same script as the daemon. I plan to overhaul in a future update to use aiohttp, which 'should' allow everything to play nice together.
-
-Windows
-
-```
-venv\Scripts\python webview.py
-```
-or you can run by clicking on the `webview.bat` script file.
-
-Linux
-
-```
-venv/bin/python3 webview.py
 ```
 
 Direct browser to http://localhost:5000

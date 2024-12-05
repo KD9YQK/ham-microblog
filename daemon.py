@@ -7,6 +7,7 @@ import asyncio
 import json
 from tcpAPRSIS import get_aprs_pw, pad_callsign
 import aprsModem
+import webview
 
 
 class Daemon:
@@ -183,6 +184,8 @@ if __name__ == "__main__":
 
         # Outgoing Messages Loop
         _listen = _loop.create_task(daemon.process_outgoing())
+
+        _web = _loop.run_until_complete(webview.app.run_task(host='0.0.0.0'))
 
         # Start All Loops
         _loop.run_forever()

@@ -44,8 +44,7 @@ class Radio:
                     else:
                         print('Message Received')
                         print(frame)
-            except Exception as e:
-                print(f'  * APRS - ERROR - {e}')
+            except AttributeError:
                 await asyncio.sleep(1)
 
     async def transmitter(self, interval=1.0):

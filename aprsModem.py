@@ -37,41 +37,53 @@ class Radio:
 
     async def receiver(self, callback=None):
         while True:
-            async for frame in self.kiss_protocol.read():
-                if callback:
-                    await callback(frame)
-                else:
-                    print('Message Received')
-                    print(frame)
+            try:
+                async for frame in self.kiss_protocol.read():
+                    if callback:
+                        await callback(frame)
+                    else:
+                        print('Message Received')
+                        print(frame)
+            except Exception as e:
+                print(f'  * APRS - ERROR - {e}')
+                await asyncio.sleep(1)
 
     async def transmitter(self, interval=1.0):
         while True:
-            if len(self.tx_buffer) > 0:
-                msg = self.tx_buffer[0]
-                self.tx_buffer.pop(0)
-                frame = Frame.ui(
-                    destination='ADZ666',
-                    source=msg['src'],
-                    path=self.PATH,
-                    info=msg['info'],
-                )
-                if self.tx_en:
-                    self.kiss_protocol.write(frame)
+            try:
+                if len(self.tx_buffer) > 0:
+                    msg = self.tx_buffer[0]
+                    self.tx_buffer.pop(0)
+                    frame = Frame.ui(
+                        destination='ADZ666',
+                        source=msg['src'],
+                        path=self.PATH,
+                        info=msg['info'],
+                    )
+                    if self.tx_en:
+                        self.kiss_protocol.write(frame)
 
-                # print(frame)
+                    # print(frame)
+            except Exception as e:
+                print(f'  * APRS - ERROR - {e}')
+                pass
             await asyncio.sleep(interval)
 
     async def send_pos(self, delay=600):
         await asyncio.sleep(2)
         while True:
-            m = {'src': f'{self.MYCALL}{self.SSID}', 'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]} {self.COMMENT}'}
+            try:
+                m = {'src': f'{self.MYCALL}{self.SSID}',
+                     'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]} {self.COMMENT}'}
 
-            self.tx_buffer.append(m)
+                self.tx_buffer.append(m)
+            except Exception as e:
+                print(f'  * ARPS - EROR - {e}')
+                pass
             await asyncio.sleep(delay)
 
     async def setup(self, rx_callback=None):
         _loop = asyncio.get_event_loop()
-
 
         _rec = _loop.create_task(self.receiver(rx_callback))
         _tx = _loop.create_task(self.transmitter(interval=1.0))
@@ -96,9 +108,8 @@ class Radio:
                         await asyncio.sleep(1)
                     print(f'  * APRS -  Disconnected {transport.get_extra_info("peername")}')
                 except ConnectionRefusedError:
-                    #print('  * APRS - Attempting to reconnecting in 15 seconds')
+                    # print('  * APRS - Attempting to reconnecting in 15 seconds')
                     await asyncio.sleep(5)
-
 
 
 if __name__ == "__main__":

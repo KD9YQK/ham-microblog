@@ -14,6 +14,29 @@ class types:
     GET_MSG_TARGET = 'gettarget'
 
 
+def process_buffer(data):
+    try:
+        decoded = json.loads(data)
+    except json.decoder.JSONDecodeError:
+        print('##########################')
+        print('  * TCP/IP - ERROR JSONDecodeError')
+        print(data)
+        print("###########################")
+        return
+    ##################################
+    # Process Commands
+    ##################################
+    cmd = decoded["type"]
+    val = decoded['value']
+    if cmd == types.ADD_BLOG:
+        db_functions.add_blog(val['time'], val['callsign'], val['msg'])
+    elif cmd == types.GET_CALLSIGN:
+        db_functions.bulk_add_blog(val)
+    elif cmd == types.GET_ALL_MSGS:
+        db_functions.set_tcp_last()
+        db_functions.bulk_add_blog(val)
+
+
 class ClientProtocol(asyncio.Protocol):
     peername = None
     transport: asyncio.BaseTransport
@@ -43,29 +66,7 @@ class ClientProtocol(asyncio.Protocol):
         if b'<EOF>' in self.buffer:
             s = self.buffer.split(b'<EOF>', maxsplit=2)
             self.buffer = s[1]
-            self.process_buffer(s[0])
-
-    def process_buffer(self, data):
-        try:
-            decoded = json.loads(data)
-        except json.decoder.JSONDecodeError:
-            print('##########################')
-            print('  * TCP/IP - ERROR JSONDecodeError')
-            print(data)
-            print("###########################")
-            return
-        ##################################
-        # Process Commands
-        ##################################
-        cmd = decoded["type"]
-        val = decoded['value']
-        if cmd == types.ADD_BLOG:
-            db_functions.add_blog(val['time'], val['callsign'], val['msg'])
-        elif cmd == types.GET_CALLSIGN:
-            db_functions.bulk_add_blog(val)
-        elif cmd == types.GET_ALL_MSGS:
-            db_functions.set_tcp_last()
-            db_functions.bulk_add_blog(val)
+            process_buffer(s[0])
 
     def send_msg(self, msg: bytes):
         client = clients[clients.index(self)]
@@ -81,16 +82,14 @@ client_tcp: (asyncio.BaseTransport, asyncio.BaseProtocol) = None
 
 
 async def do_connect():
-    _loop = asyncio.get_event_loop()
     while True:
         if len(clients) > 0:
             await asyncio.sleep(1)
             continue
         try:
-
+            _loop = asyncio.get_event_loop()
             _client_tcp = await _loop.create_connection(ClientProtocol, '157.230.203.194', 8808)
         except OSError:
-            #print("  * TCP/IP - Server not up retrying in 30 seconds...")
             await asyncio.sleep(5)
         else:
             await asyncio.sleep(1)
@@ -99,7 +98,6 @@ async def do_connect():
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    # coro = loop.create_connection(do_connect(host="157.230.203.194", port=8888))
     server = loop.run_until_complete(do_connect())
 
     try:

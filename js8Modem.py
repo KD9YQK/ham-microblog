@@ -31,11 +31,9 @@ def abc_to_num(abc: str):  # Convert a string of Letters Back to Numbers
 
 
 class modAppMon(pyjs8call.AppMonitor):
-    #def start(self, headless=False, args=None):
-    #    pass
 
     def _monitor(self):
-        '''Application monitoring thread.'''
+        """Application monitoring thread."""
         while self._parent.online:
             if not self.is_running() and not self._parent._client.restarting:
                 if self.restart:
@@ -44,9 +42,6 @@ class modAppMon(pyjs8call.AppMonitor):
                 else:
                     # exit if the js8call application is closed
                     self._parent._client.stop()
-                    #self._parent._client.exit_tasks()
-
-                    # psutil.Process().terminate()
 
             time.sleep(1)
 
@@ -62,21 +57,18 @@ class modClient(pyjs8call.Client):
 
 class JS8modem:
     js8call: pyjs8call.Client
-    is_running = True
     settings = {}
     HOST = "127.0.0.1"
     PORT = 2442
+    _dummy = None
 
     def __init__(self, host='127.0.0.1', port=2442):
         self.HOST = host
         self.PORT = port
         self.js8call = modClient(host=host, port=port)
         self.js8call.js8call.app = modAppMon(self.js8call.js8call.app._parent)
-        #self.js8call.js8call.app = modAppMon(self.js8call.js8call.app._parent)
         self.js8call.callback.register_incoming(self._incoming_callback)
         self.js8call.callback.register_spots(self._new_spots_callback)
-        #print("  * Js8Call Modem Initialized.")
-        #print(f"* Host: {host} * Port: {port}")
         self.settings = db_functions.get_settings()
         for i in ['@BLOG', self.settings['js8group']]:
             if i not in self.js8call.settings.get_groups_list():
@@ -96,7 +88,6 @@ class JS8modem:
     # Callbacks
     ###########################################
     def _incoming_callback(self, msg):  # Test callback when any msg is received
-        # print(f" * From: {msg.origin} To: {msg.destination} Message: {msg.text}")
         if '...' in msg.text:
             print(f'  * JS8 - ERROR Incomplete MSG - {msg.text}')
             return
@@ -162,6 +153,7 @@ class JS8modem:
 
         with open('tmp/js8.spots', 'wb') as f:
             pickle.dump(allstn, f)
+
         print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, _grid, spot.offset,
                                                     time.strftime('%x %X', time.localtime(spot.timestamp))))
 
@@ -193,7 +185,7 @@ class JS8modem:
         self.js8call.send_directed_message(msg.origin, message)
 
     def _add_post(self, msg):
-        _t = self.is_running
+        self._dummy = None
         # do not respond in the following cases:
         if msg.text in (None, ''):  # message text is empty
             return

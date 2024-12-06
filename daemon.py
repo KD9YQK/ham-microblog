@@ -159,7 +159,7 @@ if __name__ == "__main__":
         daemon = Daemon()
         daemon.settings = settings
 
-        _loop = asyncio.get_event_loop()
+        _loop = asyncio.new_event_loop()
 
         threads = []
 

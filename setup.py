@@ -89,14 +89,14 @@ if __name__ == '__main__':
         print('Latitude DDMM.SSN')
         i = input(f"example ({lat}))> ")
         if i != '':
-            lat = i
+            lat = i.upper()
         else:
             print(f'  * Error - Coordinates are required for APRS')
             exit()
         print('Longitude 0DDMM.SSW')
         i = input(f"example ({lon}))> ")
         if i != '':
-            lon = i
+            lon = i.upper()
         else:
             print(f'  * Error - Coordinates are required for APRS')
             exit()

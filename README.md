@@ -39,6 +39,7 @@ This creates the database and builds the tables. It also asks a series of questi
 Windows
 
 ```
+venv\Scripts\pip install -r requirements.txt
 venv\Scripts\python setup.py
 ```
 or you can run by clicking on the `setup.bat` script file.

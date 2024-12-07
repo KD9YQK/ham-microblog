@@ -1,3 +1,4 @@
+import asyncio
 import pickle
 from quart import Quart, render_template, request
 import db_functions
@@ -6,6 +7,8 @@ import time
 from js8Modem import Command
 from tcpModem import types
 
+import os
+import sys
 
 target = Command.GET_POSTS
 app = Quart(__name__)
@@ -22,7 +25,6 @@ async def index():
         # settings['js8spots']['KD9YQK'] = {'blogger': True, 'hear_blog': ['KD8HHH'], 'heard_blog': ['KD8HHH'], 'hear_not': [], 'heard_not': []}
     if request.method == 'POST':  # A search was used
         data = await request.form
-        print(dict(data))
         call = data['callsign'].upper()
         if call == "":
             blog = db_functions.get_all_blog()
@@ -32,7 +34,8 @@ async def index():
         if call == owncall:
             return await render_template("qth.html", blog=blog, title=title, settings=settings, target=target)
         else:
-            return await render_template("index.html", blog=blog, title=title, settings=settings, target=f"{target} {call}")
+            return await render_template("index.html", blog=blog, title=title, settings=settings,
+                                         target=f"{target} {call}")
     else:  # Default Main Page
         blog = db_functions.get_all_blog()
         return await render_template("index.html", blog=blog, title="Main Feed", settings=settings, target=target)
@@ -79,6 +82,37 @@ async def callsign(call):
         return await render_template("qth.html", blog=blog, title=title, settings=settings, target=target)
     else:
         return await render_template("index.html", blog=blog, title=title, settings=settings, target=f"{target} {call}")
+
+
+@app.route("/settings", methods=['GET', 'POST'])
+async def setting():
+    settings = db_functions.get_settings()
+    # print(settings)
+    if request.method == 'POST':
+        data = await request.form
+        js8En = False
+        aprsEn = False
+        tcpEn = False
+        if 'js8modem' in data.keys():
+            js8En = True
+        if 'aprsmodem' in data.keys():
+            aprsEn = True
+        if 'tcpmodem' in data.keys():
+            tcpEn = True
+        db_functions.set_settings(callsign=data['callsign'], js8modem=js8En, js8host=data['js8host'],
+                                  js8port=int(data['js8port']), js8group=data['js8group'], aprsmodem=aprsEn,
+                                  aprshost=data['aprshost'], aprsport=int(data['aprsport']),
+                                  aprs_ssid=int(data['aprsssid']), tcpmodem=tcpEn, timezone=data['timezone'].lower(),
+                                  lat=data['lat'], lon=data['lon'])
+        settings = db_functions.get_settings()
+        _loop = asyncio.get_event_loop()
+        _loop.create_task(reboot())
+        return await render_template("settings.html", settings=settings, saved=True)
+    return await render_template("settings.html", settings=settings, saved=False)
+
+async def reboot():
+    await asyncio.sleep(5)
+    os.execv(sys.executable, ['python'] + sys.argv)
 
 
 ###########################################

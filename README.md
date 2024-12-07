@@ -23,6 +23,7 @@ The project is in a functional state and is currently in testing.
 ## Install
 Windows users will need to install Python and Git before starting. Make sure during the python install to check the box to add to system PATH. JS8Call also needs to be in the system PATH as well. The easiest way to do this is re-install JS8Call and check the box to add to PATH.
 1) Python 3.9 or greater - https://www.python.org/downloads/
+    Note: Newest version of python will need to be run a 2nd time to enable the path environment.
 2) Git for windows - https://gitforwindows.org/
 3) JS8Call - http://files.js8call.com/latest.html
 

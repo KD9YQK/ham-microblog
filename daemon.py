@@ -1,3 +1,5 @@
+import pickle
+
 import ax253
 import db_functions
 import js8Modem
@@ -165,6 +167,9 @@ if __name__ == "__main__":
 
         # JS8Call Modem Loop
         if settings['js8modem']:
+            with open('tmp/js8.spots', 'wb') as f:
+                pickle.dump({settings['callsign']: {'hear_blog': [], 'hear_not': [], 'heard_blog': [], 'heard_not': [],
+                                                    'blogger': True}}, f)
             _js8 = _loop.create_task(daemon.start_js8modem(settings['js8host'], settings['js8port']))
 
         # TCP Modem Loop

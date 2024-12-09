@@ -13,8 +13,8 @@ class Radio:
     MYCALL: str
     SSID: str
     PATH = ["WIDE1-1", "WIDE2-1"]
-    LAT = "4145.  N"
-    LON = "08818.  W"
+    LON = "4145.  N"
+    LAT = "08818.  W"
     SYMBOL = "/l"
     COMMENT = 'Ham-Microblog Client https://github.com/KD9YQK/ham-microblog'
 
@@ -73,7 +73,7 @@ class Radio:
         while True:
             try:
                 m = {'src': f'{self.MYCALL}{self.SSID}',
-                     'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]} {self.COMMENT}'}
+                     'info': f'={self.LON}{self.SYMBOL[:1]}{self.LAT}{self.SYMBOL[1:]} {self.COMMENT}'}
 
                 self.tx_buffer.append(m)
             except Exception as e:

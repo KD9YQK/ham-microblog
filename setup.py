@@ -56,8 +56,8 @@ if __name__ == '__main__':
     aprshost = '127.0.0.1'
     aprsport = 8001
     aprs_ssid = 15
-    lat = "4043.24N"
-    lon = "07400.22W"
+    lon = "4043.24N"
+    lat = "07400.22W"
     i = input("y/n (default:n)> ")
     if i.lower() in ['y', 'yes']:
         aprsmodem = True
@@ -86,21 +86,21 @@ if __name__ == '__main__':
                 aprs_ssid = int(i)
         except ValueError:
             print(f'  * Error - Not a valid number')
-        print('Latitude DDMM.SSN')
-        i = input(f"example ({lat}))> ")
-        if i != '':
-            lat = i.upper()
-        else:
-            print(f'  * Error - Coordinates are required for APRS')
-            exit()
-        print('Longitude 0DDMM.SSW')
+        print('Longitude DDMM.SSN')
         i = input(f"example ({lon}))> ")
         if i != '':
             lon = i.upper()
         else:
             print(f'  * Error - Coordinates are required for APRS')
             exit()
-        print(f'  * Latitude/Longitude set to {lat}/{lon}')
+        print('Latitude DDDMM.SSW')
+        i = input(f"example ({lat}))> ")
+        if i != '':
+            lat = i.upper()
+        else:
+            print(f'  * Error - Coordinates are required for APRS')
+            exit()
+        print(f'  * Longitude/Latitude set to {lon}/{lat}')
     else:
         print('  * APRS Modem Disabled')
     print()

@@ -8,7 +8,7 @@ body{
     width: 100%;
     position: relative;
     font-family: 'poppins', sans-serif;
-    background: #fafafa;
+    background: #bccad6;
 }
 
 .page-title{
@@ -47,19 +47,20 @@ body{
 .header {
   padding: 60px;
   text-align: center;
-  background: grey;
-  color: white;
+  background: #8d9db6;
+  color: black;
   font-size: 30px;
 }
 /* main section */
 
 .footer {
-    background-color: lightgrey;
+    background-color: #667292;
     text-align: right;
     padding: 10px;
     position: fixed;
     bottom: 0;
     width: 100%;
+    color: white;
 }
 
 .post-addmonbtn {
@@ -102,7 +103,7 @@ body{
     align-items: center;
     padding: 1.2rem;
     gap: 10px;
-    background-color: lightgrey;
+    background-color: #f1e3dd;
 }
 
 .post-header .user-icon{

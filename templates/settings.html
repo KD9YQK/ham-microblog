@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ham Microblog : Home Page</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
 </head>
 <body>
@@ -38,7 +39,7 @@
     <p style="font-size: 24px; color: green;">Settings Saved!</p>
 </div>
 {% endif %}
-<div class="page-title">
+<div class="page-title" style="height:450px;">
     <form method="post" action="/settings" style="width:340px; align-items:center;">
         <label>Callsign: </label>
         <input type="text" name="callsign" value="{{ settings['callsign'] }}"><br>

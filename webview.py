@@ -88,7 +88,7 @@ async def callsign(call):
 @app.route('/addmon', methods=['POST'])
 async def addmon():
     data = await request.form
-    call = await data['addmon']
+    call = data['addmon']
     db_functions.add_monitoring(call)
     return "nothing"
 

@@ -50,13 +50,14 @@
     <a href="/">Main</a>
     <a href="/monitoring">Monitoring</a>
     <a href="/qth">{{ settings['callsign'] }}</a>
+    <a href="/settings" class="split">Settings</a>
     <div class="search-container">
         <form action="/" method="post">
           <input type="text" placeholder="Search.." name="callsign">
           <button type="submit">Submit</button>
         </form>
     </div>
-  {# <a href="#about" class="split">About</a> #}
+
 </div>
 
 {% if settings['js8modem'] %}

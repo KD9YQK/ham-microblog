@@ -1,4 +1,3 @@
-import asyncio
 import pickle
 from quart import Quart, render_template, request
 import db_functions
@@ -6,9 +5,6 @@ import time
 
 from js8Modem import Command
 from tcpModem import types
-
-import os
-import sys
 
 target = Command.GET_POSTS
 app = Quart(__name__)
@@ -84,35 +80,6 @@ async def callsign(call):
         return await render_template("index.html", blog=blog, title=title, settings=settings, target=f"{target} {call}")
 
 
-@app.route("/settings", methods=['GET', 'POST'])
-async def setting():
-    settings = db_functions.get_settings()
-    # print(settings)
-    if request.method == 'POST':
-        data = await request.form
-        js8En = False
-        aprsEn = False
-        tcpEn = False
-        if 'js8modem' in data.keys():
-            js8En = True
-        if 'aprsmodem' in data.keys():
-            aprsEn = True
-        if 'tcpmodem' in data.keys():
-            tcpEn = True
-        db_functions.set_settings(callsign=data['callsign'], js8modem=js8En, js8host=data['js8host'],
-                                  js8port=int(data['js8port']), js8group=data['js8group'], aprsmodem=aprsEn,
-                                  aprshost=data['aprshost'], aprsport=int(data['aprsport']),
-                                  aprs_ssid=int(data['aprsssid']), tcpmodem=tcpEn, timezone=data['timezone'].lower(),
-                                  lat=data['lat'], lon=data['lon'])
-        settings = db_functions.get_settings()
-        _loop = asyncio.get_event_loop()
-        _loop.create_task(reboot())
-        return await render_template("settings.html", settings=settings, saved=True)
-    return await render_template("settings.html", settings=settings, saved=False)
-
-async def reboot():
-    await asyncio.sleep(5)
-    os.execv(sys.executable, ['python'] + sys.argv)
 
 
 ###########################################

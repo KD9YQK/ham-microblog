@@ -84,12 +84,24 @@ body{
 }
 
 
+.post-addmonbtn:hover{
+    background-color: white;
+    cursor: pointer;
+}
+
+
 .post-delmonbtn {
     background: url('../img/is_monitor.png');
     width:24px;
     height:24px;
     border:none;
     background-size: 100% 100%;
+}
+
+
+.post-delmonbtn:hover{
+    background-color: white;
+    cursor: pointer;
 }
 
 

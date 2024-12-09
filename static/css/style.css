@@ -35,12 +35,24 @@ body{
 }
 
 
+.page-title .js8getblog-btn:hover{
+    background-color: white;
+    cursor: pointer;
+}
+
+
 .page-title .aprsgetblog-btn{
     background: url('../img/tower_icon.png');
     width:32px;
     height:32px;
     border:none;
     background-size: 100% 100%;
+}
+
+
+.page-title .aprsgetblog-btn:hover{
+    background-color: white;
+    cursor: pointer;
 }
 
 
@@ -103,7 +115,7 @@ body{
     align-items: center;
     padding: 1.2rem;
     gap: 10px;
-    background-color: #f1e3dd;
+    background-color: #8d9db6;
 }
 
 .post-header .user-icon{
@@ -253,6 +265,13 @@ body{
     border:none;
     background-size: 100% 100%;
 }
+
+
+.js8btn:hover{
+    background-color: white;
+    cursor: pointer;
+}
+
 
 .js8beacon{
     display: flex;

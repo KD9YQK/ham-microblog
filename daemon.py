@@ -47,8 +47,6 @@ def startup():
         except Exception as e:
             print(f"  * APRS - ERROR - {e}")
 
-        print(len(workers))
-
 
 class Daemon:
     tcpmodem: tcpModem.ClientProtocol

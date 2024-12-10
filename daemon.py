@@ -38,6 +38,7 @@ def startup():
                                            settings['aprsport'])
         daemon.aprsmodem.LAT = settings['lat']
         daemon.aprsmodem.LON = settings['lon']
+        rx, tx, pos =
         workers.append(loop.create_task(daemon.aprsmodem.main(daemon.rx_aprs_callback)))
 
 

@@ -77,7 +77,7 @@ class Radio:
 
                 self.tx_buffer.append(m)
             except Exception as e:
-                print(f'  * ARPS - EROR - {e}')
+                print(f'  * ARPS - POS EROR - {e}')
                 pass
             await asyncio.sleep(delay)
 

@@ -38,8 +38,16 @@ def startup():
                                            settings['aprsport'])
         daemon.aprsmodem.LAT = settings['lat']
         daemon.aprsmodem.LON = settings['lon']
-        rx, tx, pos =
-        workers.append(loop.create_task(daemon.aprsmodem.main(daemon.rx_aprs_callback)))
+        try:
+            _rx, _tx, _pos = daemon.aprsmodem.setup(rx_callback=daemon.rx_aprs_callback)
+            workers.append(loop.create_task(daemon.aprsmodem.main()))
+            workers.append(_rx)
+            workers.append(_tx)
+            workers.append(_pos)
+        except Exception as e:
+            print(f"  * APRS - ERROR - {e}")
+
+        print(len(workers))
 
 
 class Daemon:

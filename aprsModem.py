@@ -69,7 +69,7 @@ class Radio:
             await asyncio.sleep(interval)
 
     async def send_pos(self, delay=600):
-        await asyncio.sleep(2)
+        await asyncio.sleep(10)
         while True:
             try:
                 m = {'src': f'{self.MYCALL}{self.SSID}',
@@ -81,7 +81,7 @@ class Radio:
                 pass
             await asyncio.sleep(delay)
 
-    async def setup(self, rx_callback=None):
+    def setup(self, rx_callback=None):
         _loop = asyncio.get_event_loop()
 
         _rec = _loop.create_task(self.receiver(rx_callback))
@@ -92,11 +92,7 @@ class Radio:
             _pos = None
         return _rec, _tx, _pos
 
-    async def main(self, rx_callback=None):
-        try:
-            _rec, _tx, _pos = await self.setup(rx_callback=rx_callback)
-        except Exception as e:
-            print(e)
+    async def main(self):
         while True:
             await asyncio.sleep(1)
             if self.kiss_protocol is None or self.kiss_protocol.transport.is_closing():

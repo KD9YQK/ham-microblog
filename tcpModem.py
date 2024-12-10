@@ -26,6 +26,7 @@ def process_buffer(data):
     ##################################
     # Process Commands
     ##################################
+    print(f'  * TCP - Msg - {decoded}')
     cmd = decoded["type"]
     val = decoded['value']
     if cmd == types.ADD_BLOG:

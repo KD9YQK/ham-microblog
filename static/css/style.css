@@ -307,3 +307,15 @@ body{
     border: 1px solid #ccc;
   }
 }
+
+@media screen and (max-width: 1500px) {
+    .js8_call_stations{
+        margin: 0 auto;
+        position: relative;
+        float: none;
+        display: block;
+        text-align: center;
+        padding: 6px;
+        left: 0px;
+    }
+}

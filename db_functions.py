@@ -264,7 +264,7 @@ def purge_expired_blog():
 
 def get_db(err=True) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
     now = get_time()
-    con = sqlite3.connect("microblog.db")
+    con = sqlite3.connect("mmbr.db")
     cur = con.cursor()
 
     try:

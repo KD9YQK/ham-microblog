@@ -1,3 +1,4 @@
+import os.path
 import pickle
 from quart import request, render_template
 import ax253
@@ -262,9 +263,11 @@ async def restart():
 if __name__ == "__main__":
     print('')
     print('#########################################')
-    print('#  IMBR - It must be received')
+    print('#  MMBR - Messages Must Be Received')
     print('#  Bob KD9YQK - https://www.kd9yqk.com/')
-    print('#########################################')
+    print('#########################################\n')
+    if not os.path.exists('mmgr.db'):
+        db_functions.build_db()
     try:
         daemon = Daemon()
 

@@ -1,5 +1,7 @@
 import asyncio
 import json
+import os
+
 import db_functions
 from js8Modem import Command
 from tcpModem import types
@@ -144,9 +146,13 @@ class tcpServer:
 if __name__ == '__main__':
     print('')
     print('#########################################')
-    print('#  Ham Microblog TCP/IP Server')
+    print('#  MMBR TCP/IP Server')
     print('#  Bob KD9YQK - http://www.kd9yqk.com/')
     print('#########################################')
+    if not os.path.exists('mmgr.db'):
+        db_functions.build_db()
+        print('Database created')
+
     tcp = tcpServer()
     loop = asyncio.get_event_loop()
     coro = loop.create_server(tcp.ServerProtocol, port=8808)

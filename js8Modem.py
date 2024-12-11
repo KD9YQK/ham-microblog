@@ -176,10 +176,10 @@ class JS8modem:
             return
         if len(blog) < 1:
             return
-        prefix = 'POST '
+        prefix = f'{Command.POST}'
         if len(cut) == 2:
             prefix += f'{blog[0]["callsign"]} '
-        message = f"{prefix}{num_to_abc(blog[0]['time'])} {blog[0]['msg']}"
+        message = f"{prefix} {num_to_abc(blog[0]['time'])} {blog[0]['msg']}"
 
         # respond to origin station with directed message
         self.js8call.send_directed_message(msg.origin, message)
@@ -206,6 +206,12 @@ class JS8modem:
         if dest == "":
             dest = self.settings['js8group']
         message = f"{Command.POST} {num_to_abc(post['time'])} {post['msg']}"
+        self.js8call.send_directed_message(dest, message)
+
+    def broadcast_target_post(self, post: dict, dest=""):
+        if dest == "":
+            dest = self.settings['js8group']
+        message = f"{Command.POST} {post['callsign']} {num_to_abc(post['time'])} {post['msg']}"
         self.js8call.send_directed_message(dest, message)
 
     def get_posts(self, dest=""):

@@ -9,6 +9,7 @@ clients = []
 class types:
     ERROR = 'error'
     ADD_BLOG = 'addblog'
+    ADD_TARGET_BLOG = 'addtargetblog'
     GET_CALLSIGN = 'getcallsign'
     GET_ALL_MSGS = 'getall'
     GET_MSG_TARGET = 'gettarget'

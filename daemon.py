@@ -97,6 +97,7 @@ class Daemon:
                         tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
                                   'info': f':{pad_callsign("HAMBLG")}:{Command.POST} {m["time"]} {m["msg"]}'}
                         self.aprsmodem.tx_buffer.append(tx_msg)
+
                 elif m["command"] == tcpModem.types.GET_ALL_MSGS:
                     if self.settings['js8modem'] and js8on:
                         self.js8modem.get_posts()
@@ -106,6 +107,7 @@ class Daemon:
                         tmp: int = s['tcplast']
                         tcp_msg['value'] = dict({'time': tmp})
                         self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
+
                 elif m["command"] == tcpModem.types.GET_CALLSIGN:
                     if self.settings['js8modem'] and js8on:
                         self.js8modem.get_posts_callsign(m['callsign'])
@@ -117,9 +119,22 @@ class Daemon:
                         tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
                                   'info': f':{pad_callsign("HAMBLG")}:{Command.GET_POSTS} {m["callsign"]}'}
                         self.aprsmodem.tx_buffer.append(tx_msg)
+
                 elif m["command"] == tcpModem.types.GET_MSG_TARGET:
                     if self.settings['js8modem'] and js8on:
                         self.js8modem.get_posts_callsign(dest=m['callsign'], callsign=m['msg'])
+
+                elif m["command"] == tcpModem.types.ADD_TARGET_BLOG:
+                    if self.settings['js8modem'] and js8on:
+                        self.js8modem.broadcast_target_post(m)
+                    if self.settings['tcpmodem'] and tcpon:
+                        tcp_msg['type'] = tcpModem.types.ADD_BLOG
+                        tcp_msg['value'] = m
+                        self.tcpmodem.send_msg(json.dumps(tcp_msg).encode())
+                    if self.settings['aprsmodem'] and aprson:
+                        tx_msg = {'src': f"{self.settings['callsign']}-{self.settings['aprsssid']}",
+                                  'info': f':{pad_callsign("HAMBLG")}:{Command.POST} {m["callsign"]} {m["time"]} {m["msg"]}'}
+                        self.aprsmodem.tx_buffer.append(tx_msg)
 
     async def rx_aprs_callback(self, frame: ax253.Frame):
         frm = str(frame)
@@ -247,7 +262,7 @@ async def restart():
 if __name__ == "__main__":
     print('')
     print('#########################################')
-    print('#  Ham Microblog Daemon')
+    print('#  IMBR - It must be received')
     print('#  Bob KD9YQK - https://www.kd9yqk.com/')
     print('#########################################')
     try:

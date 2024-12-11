@@ -1,7 +1,6 @@
 import asyncio
 import json
-import os
-
+import os.path
 import db_functions
 from js8Modem import Command
 from tcpModem import types

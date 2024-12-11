@@ -73,7 +73,7 @@ class Radio:
         while True:
             try:
                 m = {'src': f'{self.MYCALL}{self.SSID}',
-                     'info': f'={self.LON}{self.SYMBOL[:1]}{self.LAT}{self.SYMBOL[1:]} {self.COMMENT}'}
+                     'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]} {self.COMMENT}'}
 
                 self.tx_buffer.append(m)
             except Exception as e:

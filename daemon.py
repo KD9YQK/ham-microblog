@@ -216,7 +216,7 @@ async def setting():
             aprsEn = True
         if 'tcpmodem' in data.keys():
             tcpEn = True
-        db_functions.set_settings(callsign=data['callsign'], js8modem=js8En, js8host=data['js8host'],
+        db_functions.set_settings(callsign=data['callsign'].upper(), js8modem=js8En, js8host=data['js8host'],
                                   js8port=int(data['js8port']), js8group=data['js8group'], aprsmodem=aprsEn,
                                   aprshost=data['aprshost'], aprsport=int(data['aprsport']),
                                   aprs_ssid=int(data['aprsssid']), tcpmodem=tcpEn, timezone=data['timezone'].lower(),

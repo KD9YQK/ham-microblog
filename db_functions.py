@@ -78,7 +78,7 @@ def get_outgoing_posts():
 def add_outgoing_post(command: str, mtime: int, callsign: str, msg: str):
     con, cur = get_db()
     cur.execute('''INSERT INTO outgoing (time, callsign, message, command) VALUES (?, ?, ?, ?)''',
-                (mtime, callsign, msg, command, ))
+                (mtime, callsign, msg, command,))
     con.commit()
     con.close()
 
@@ -262,9 +262,9 @@ def purge_expired_blog():
     con.close()
 
 
-def get_db(err = True) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
+def get_db(err=True) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
     now = get_time()
-    con = sqlite3.connect("microblog.db")
+    con = sqlite3.connect("mmbr.db")
     cur = con.cursor()
 
     try:

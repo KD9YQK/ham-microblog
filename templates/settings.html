@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ham MMBR</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+</head>
+<body>
+<div class="header">
+  <h1>Ham MMBR</h1>
+  <p>Messages must be received.</p>
+</div>
+<div class="topnav">
+    <a href="/">Main</a>
+    <a href="/monitoring">Monitoring</a>
+    <a href="/qth">{{ settings['callsign'] }}</a>
+    <a href="/settings" class="split">Settings</a>
+    <div class="search-container">
+        <form action="/" method="post">
+          <input type="text" placeholder="Search.." name="callsign">
+          <button type="submit">Submit</button>
+        </form>
+    </div>
+  {# <a href="#about" class="split">About</a> #}
+</div>
+
+{% block body %}
+
+<br>
+<div class="page-title">
+    <h1>Settings</h1>
+</div>
+{% if saved == True %}
+<div class="page-title">
+    <p style="font-size: 24px; color: green;">Settings Saved!</p>
+</div>
+{% endif %}
+<div class="page-title" style="height:450px;">
+    <form method="post" action="/settings" style="width:340px; align-items:center;">
+        <label>Callsign: </label>
+        <input type="text" name="callsign" value="{{ settings['callsign'] }}"><br>
+        <label>Sync via TCP/IP: </label>
+        {% if settings['tcpmodem'] %}
+        <input type="checkbox" name="tcpmodem" checked><br>
+        {% else %}
+        <input type="checkbox" name="tcpmodem"><br>
+        {% endif %}
+        <label>Display Time: </label>
+        {% if settings['timezone'] == 'gmt' %}
+            <input type="radio" name="timezone" value="gmt" checked>GMT
+            <input type="radio" name="timezone" value="local">Local<br><br>
+        {% else %}
+            <input type="radio" name="timezone" value="gmt">GMT
+            <input type="radio" name="timezone" value="local" checked>Local<br><br>
+        {% endif %}
+
+
+        <label>JS8Call: </label>
+        {% if settings['js8modem'] %}
+        <input type="checkbox" name="js8modem" checked><br>
+        {% else %}
+        <input type="checkbox" name="js8modem" ><br>
+        {% endif %}
+        <label>Host IP: </label>
+        <input type="text" name="js8host" value="{{ settings['js8host'] }}"><br>
+        <label>Port: </label>
+        <input type="text" name="js8port" value="{{ settings['js8port'] }}"><br>
+        <label>Target Group: </label>
+        <input type="text" name="js8group" value="{{ settings['js8group'] }}"><br><br>
+
+        <label>APRS (Direwolf): </label>
+        {% if settings['aprsmodem'] %}
+        <input type="checkbox" name="aprsmodem" checked><br>
+        {% else %}
+        <input type="checkbox" name="aprsmodem" ><br>
+        {% endif %}
+        <label>Host IP: </label>
+        <input type="text" name="aprshost" value="{{ settings['aprshost'] }}"><br>
+        <label>Port: </label>
+        <input type="text" name="aprsport" value="{{ settings['aprsport'] }}"><br>
+        <label>SSID: </label>
+        <input type="text" name="aprsssid" value="{{ settings['aprsssid'] }}"><br>
+        <label>Longitude [ DDDMM.SS(N/S) ]: </label>
+        <input type="text" name="lon" value="{{ settings['lon'] }}"><br>
+        <label>Latitude [ DDMM.SS(W/E) ]: </label>
+        <input type="text" name="lat" value="{{ settings['lat'] }}"><br><br>
+
+        <input type="submit" value="Save Settings">
+    </form>
+</div>
+
+
+{% endblock %}
+
+<div class="footer">
+        <p><a href="https://kd9yqk.com" style="color: white;" target="_blank">2025 - Created by KD9YQK</a></p>
+</div>
+
+</body>
+</html>

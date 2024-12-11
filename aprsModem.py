@@ -13,8 +13,8 @@ class Radio:
     MYCALL: str
     SSID: str
     PATH = ["WIDE1-1", "WIDE2-1"]
-    LAT = "4145.  N"
-    LON = "08818.  W"
+    LON = "4145.  N"
+    LAT = "08818.  W"
     SYMBOL = "/l"
     COMMENT = 'Ham-Microblog Client https://github.com/KD9YQK/ham-microblog'
 
@@ -69,19 +69,19 @@ class Radio:
             await asyncio.sleep(interval)
 
     async def send_pos(self, delay=600):
-        await asyncio.sleep(2)
+        await asyncio.sleep(10)
         while True:
             try:
                 m = {'src': f'{self.MYCALL}{self.SSID}',
-                     'info': f'={self.LAT}{self.SYMBOL[:1]}{self.LON}{self.SYMBOL[1:]} {self.COMMENT}'}
+                     'info': f'={self.LON}{self.SYMBOL[:1]}{self.LAT}{self.SYMBOL[1:]} {self.COMMENT}'}
 
                 self.tx_buffer.append(m)
             except Exception as e:
-                print(f'  * ARPS - EROR - {e}')
+                print(f'  * ARPS - POS EROR - {e}')
                 pass
             await asyncio.sleep(delay)
 
-    async def setup(self, rx_callback=None):
+    def setup(self, rx_callback=None):
         _loop = asyncio.get_event_loop()
 
         _rec = _loop.create_task(self.receiver(rx_callback))
@@ -92,8 +92,7 @@ class Radio:
             _pos = None
         return _rec, _tx, _pos
 
-    async def main(self, rx_callback=None):
-        _rec, _tx, _pos = await self.setup(rx_callback=rx_callback)
+    async def main(self):
         while True:
             await asyncio.sleep(1)
             if self.kiss_protocol is None or self.kiss_protocol.transport.is_closing():
@@ -103,12 +102,14 @@ class Radio:
                         port=self.KISS_PORT
                     )
                     print(f'  * APRS -  Connected {transport.get_extra_info("peername")}')
-                    while not transport.is_closing():
-                        await asyncio.sleep(1)
-                    print(f'  * APRS -  Disconnected {transport.get_extra_info("peername")}')
+
                 except ConnectionRefusedError:
                     # print('  * APRS - Attempting to reconnecting in 15 seconds')
                     await asyncio.sleep(5)
+                else:
+                    while not transport.is_closing():
+                        await asyncio.sleep(1)
+                    print(f'  * APRS -  Disconnected {transport.get_extra_info("peername")}')
 
 
 if __name__ == "__main__":

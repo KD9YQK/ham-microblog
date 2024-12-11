@@ -6,7 +6,6 @@ import time
 from js8Modem import Command
 from tcpModem import types
 
-
 target = Command.GET_POSTS
 app = Quart(__name__)
 
@@ -22,7 +21,6 @@ async def index():
         # settings['js8spots']['KD9YQK'] = {'blogger': True, 'hear_blog': ['KD8HHH'], 'heard_blog': ['KD8HHH'], 'hear_not': [], 'heard_not': []}
     if request.method == 'POST':  # A search was used
         data = await request.form
-        print(dict(data))
         call = data['callsign'].upper()
         if call == "":
             blog = db_functions.get_all_blog()
@@ -32,7 +30,8 @@ async def index():
         if call == owncall:
             return await render_template("qth.html", blog=blog, title=title, settings=settings, target=target)
         else:
-            return await render_template("index.html", blog=blog, title=title, settings=settings, target=f"{target} {call}")
+            return await render_template("index.html", blog=blog, title=title, settings=settings,
+                                         target=f"{target} {call}")
     else:  # Default Main Page
         blog = db_functions.get_all_blog()
         return await render_template("index.html", blog=blog, title="Main Feed", settings=settings, target=target)
@@ -87,7 +86,7 @@ async def callsign(call):
 @app.route('/addmon', methods=['POST'])
 async def addmon():
     data = await request.form
-    call = await data['addmon']
+    call = data['addmon']
     db_functions.add_monitoring(call)
     return "nothing"
 

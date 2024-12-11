@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ham Microblog : Home Page</title>
+    <title>MMBR</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://code.jquery.com/jquery-3.5.1.js"
-          integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-          crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
 
     <script type="text/javascript">
         $(document).on('submit','#js8getblog-form',function(e){
@@ -38,25 +37,25 @@
         });
       </script>
 
-
-
 </head>
+
 <body>
 <div class="header">
-  <h1>Ham Microblog</h1>
-  <p>A radio powered social media project</p>
+  <h1>MMBR</h1>
+  <p>Messages must be received.</p>
 </div>
 <div class="topnav">
     <a href="/">Main</a>
     <a href="/monitoring">Monitoring</a>
     <a href="/qth">{{ settings['callsign'] }}</a>
+    <a href="/settings" class="split">Settings</a>
     <div class="search-container">
         <form action="/" method="post">
           <input type="text" placeholder="Search.." name="callsign">
           <button type="submit">Submit</button>
         </form>
     </div>
-  {# <a href="#about" class="split">About</a> #}
+
 </div>
 
 {% if settings['js8modem'] %}
@@ -379,7 +378,7 @@
 {% endblock %}
 
 <div class="footer">
-        <p>2024 - Created by KD9YQK</p>
+        <p><a href="https://kd9yqk.com" style="color: white;" target="_blank">2025 - Created by KD9YQK</a></p>
 </div>
 
 </body>

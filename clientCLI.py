@@ -54,6 +54,7 @@ if __name__ == '__main__':
                         print(f'\n# Post {num} of {len(posts)}')
                         print(f'# {p["callsign"]} - {p["local"]}')
                         print(f'{p["msg"]}')
+                        num += 1
 
         else:
             print(f'Error - Unknown Command - {a}')

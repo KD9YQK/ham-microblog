@@ -80,8 +80,6 @@ async def callsign(call):
         return await render_template("index.html", blog=blog, title=title, settings=settings, target=f"{target} {call}")
 
 
-
-
 ###########################################
 # Background processes without refreshing #
 ###########################################

@@ -28,7 +28,7 @@ class tcpServer:
         frm = frm.split('::')[1]
         target = frm.split(':')[0].strip()
         if target != 'HAMBLG':
-            #print(frame)
+            # print(frame)
             return
         msg = frm.split(':')[1]
         msgid = ""

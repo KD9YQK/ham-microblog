@@ -105,6 +105,8 @@ class JS8modem:
                 _grid = ' '
             else:
                 _grid = ' (' + spot.grid + ') '
+            print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, _grid, spot.offset,
+                                                        time.strftime('%x %X', time.localtime(spot.timestamp))))
 
         allstn = {}
         bloggers = db_functions.get_bloggers()
@@ -153,9 +155,6 @@ class JS8modem:
 
         with open('tmp/js8.spots', 'wb') as f:
             pickle.dump(allstn, f)
-
-        print('\t--- Spot: {}{}@ {} Hz\t{}L'.format(spot.origin, _grid, spot.offset,
-                                                    time.strftime('%x %X', time.localtime(spot.timestamp))))
 
     #####################################
     # Callback Responses

@@ -266,7 +266,7 @@ if __name__ == "__main__":
     print('#  MMBR - Messages Must Be Received')
     print('#  Bob KD9YQK - https://www.kd9yqk.com/')
     print('#########################################\n')
-    if not os.path.exists('mmgr.db'):
+    if not os.path.exists('mmbr.db'):
         db_functions.build_db()
     try:
         daemon = Daemon()

@@ -71,9 +71,9 @@ class JS8modem:
         self.js8call.callback.register_spots(self._new_spots_callback)
         self.settings = db_functions.get_settings()
         for i in ['@BLOG', self.settings['js8group']]:
-            if i not in self.js8call.settings.get_groups_list():
-                self.js8call.settings.add_group(i)
-                print(f'  * JS8 - Added {i} to Group list.')
+            if i.upper() not in self.js8call.settings.get_groups_list():
+                self.js8call.settings.add_group(i.upper())
+                print(f'  * JS8 - Added {i.upper()} to Group list.')
 
     def start(self):
         self.js8call.start()

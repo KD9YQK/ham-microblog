@@ -88,7 +88,7 @@ class JS8modem:
     # Callbacks
     ###########################################
     def _incoming_callback(self, msg):  # Test callback when any msg is received
-        if '...' in msg.text:
+        if '..' in msg.text:
             print(f'  * JS8 - ERROR Incomplete MSG - {msg.text}')
             return
         c = msg.text.split(' ')[0]

@@ -10,6 +10,11 @@ from ax253 import Frame
 clients = []
 
 
+def close():
+    for c in clients:
+        c.transport.close()
+
+
 class tcpServer:
     aprs: tcpAPRSIS.APRSIS
 
@@ -164,4 +169,5 @@ if __name__ == '__main__':
     try:
         loop.run_forever()
     except KeyboardInterrupt:
+        close()
         exit()

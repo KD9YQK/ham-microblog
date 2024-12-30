@@ -16,7 +16,7 @@ class Radio:
     LON = "4145.  N"
     LAT = "08818.  W"
     SYMBOL = "/l"
-    COMMENT = 'Ham-Microblog Client https://github.com/KD9YQK/ham-microblog'
+    COMMENT = 'Ham-Microblog Client https://kd9yqk.com/mmbr/index.php'
 
     KISS_HOST: str
     KISS_PORT: str
@@ -45,6 +45,7 @@ class Radio:
                         print('Message Received')
                         print(frame)
             except AttributeError:
+                pass
                 await asyncio.sleep(1)
 
     async def transmitter(self, interval=1.0):
@@ -69,7 +70,7 @@ class Radio:
             await asyncio.sleep(interval)
 
     async def send_pos(self, delay=600):
-        await asyncio.sleep(10)
+        await asyncio.sleep(30)
         while True:
             try:
                 m = {'src': f'{self.MYCALL}{self.SSID}',
@@ -104,7 +105,8 @@ class Radio:
                     print(f'  * APRS -  Connected {transport.get_extra_info("peername")}')
 
                 except ConnectionRefusedError:
-                    # print('  * APRS - Attempting to reconnecting in 15 seconds')
+                    print('  * APRS - Attempting to reconnecting in 5 seconds')
+                    print(self.KISS_HOST)
                     await asyncio.sleep(5)
                 else:
                     while not transport.is_closing():

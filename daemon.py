@@ -15,7 +15,7 @@ import webview
 workers = []
 
 
-def startup():
+async def startup():
     global workers
     settings = db_functions.get_settings()
     daemon.settings = settings
@@ -40,8 +40,9 @@ def startup():
         daemon.aprsmodem.LAT = settings['lat']
         daemon.aprsmodem.LON = settings['lon']
         try:
-            _rx, _tx, _pos = daemon.aprsmodem.setup(rx_callback=daemon.rx_aprs_callback)
             workers.append(loop.create_task(daemon.aprsmodem.main()))
+            await asyncio.sleep(1)
+            _rx, _tx, _pos = daemon.aprsmodem.setup(rx_callback=daemon.rx_aprs_callback)
             workers.append(_rx)
             workers.append(_tx)
             workers.append(_pos)
@@ -231,15 +232,6 @@ async def setting():
 
 async def restart():
     print('Restarting')
-    global workers
-    await asyncio.sleep(3)
-    for w in workers:
-        t = 1
-        while not w.done():
-            t += 1
-            w.cancel()
-            await asyncio.sleep(1)
-    workers = []
     try:
         daemon.tcpmodem.transport.close()
     except AttributeError:
@@ -253,9 +245,18 @@ async def restart():
         daemon.js8modem.js8call.stop(False)
     except AttributeError:
         pass
-    await asyncio.sleep(1)
+    global workers
+    for w in workers:
+        t = 1
+        while not w.done():
+            t += 1
+            w.cancel()
+            await asyncio.sleep(1)
+            print(f'killing worker {w}')
+    workers = []
+    await asyncio.sleep(0)
     try:
-        startup()
+        await startup()
     except Exception as e:
         print(e)
 
@@ -275,7 +276,7 @@ if __name__ == "__main__":
 
         # Outgoing Messages Loop
         listen = loop.create_task(daemon.process_outgoing())
-        startup()
+        loop.create_task(startup())
         web = loop.run_until_complete(webview.app.run_task(host='0.0.0.0'))
 
         # Start All Loops

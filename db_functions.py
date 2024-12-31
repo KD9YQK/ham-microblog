@@ -5,6 +5,27 @@ hour = 60 * 60
 day = hour * 24
 expire = day * 30
 
+table_data = {
+    'settings': {
+        'id': 0,
+        'callsign': ['MYCALL', 'VARCHAR(25)'],
+        'js8modem': [False, 'BOOL'],
+        'aprsmodem': [False, 'BOOL'],
+        'tcpmodem': [False, 'BOOL'],
+        'timezone': ['gmt', 'VARCHAR(25)'],
+        'tcplast': [0, 'INT'],
+        'js8host': ['127.0.0.1', 'VARCHAR(25)'],
+        'js8port': [2442, 'INT'],
+        'js8group': ['@BLOG', 'VARCHAR(25)'],
+        'aprshost': ['127.0.0.1', 'VARCHAR(25)'],
+        'aprsport': [8001, 'INT'],
+        'aprsssid': [9, 'INT'],
+        'lat': ['4145.00N', 'VARCHAR(25)'],
+        'lon': ['08818.00W', 'VARCHAR(25)'],
+        'js8auto': [False, 'BOOL']
+    }
+}
+
 
 def get_time():
     return int(time.time())
@@ -45,14 +66,15 @@ def build_db():
                     aprsmodem BOOL, aprshost VARCHAR(25), aprsport INT, aprsssid INT, lat VARCHAR(25), lon VARCHAR(25), 
                     tcpmodem BOOL, 
                     timezone VARCHAR(25),
-                    tcplast INT 
+                    tcplast INT,
+                    js8auto BOOL
                 ); """
     cur.execute(table)
     cur.execute(''' INSERT INTO settings ( id, callsign, js8modem, aprsmodem, tcpmodem, timezone, tcplast, 
-                        js8host, js8port, js8group, aprshost, aprsport, aprsssid, lat, lon)
+                        js8host, js8port, js8group, aprshost, aprsport, aprsssid, lat, lon, js8auto)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
                 (0, 'MYCALL', False, False, False, 'gmt', 0, '127.0.0.1', 2442, '@BLOG', '127.0.0.1', 8001, 9,
-                 "4145.  N", "08818.  W",))
+                 "4145.00N", "08818.00W", False,))
     con.commit()
     con.close()
 
@@ -267,6 +289,22 @@ def get_db(err=True) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
     con = sqlite3.connect("mmbr.db")
     cur = con.cursor()
 
+    # Check the DB for missing tables and add them if needed
+    tables = table_data.keys()
+    for t in tables:
+        cols = table_data[t].keys()
+        rows = cur.execute("""PRAGMA table_info({})""".format(t))
+        c = []
+        for r in rows:
+            c.append(r[1])
+        for col in cols:
+            if col not in c:
+                cur.execute('ALTER TABLE {} ADD COLUMN {} {};'.format(t, col, table_data[t][col][1]))
+                cur.execute('UPDATE {} SET {} = ?;'.format(t, col), (table_data[t][col][0],))
+                print(f'created {col}')
+    con.commit()
+
+    # Delete expired posts
     try:
         rows = cur.execute('''SELECT time, callsign FROM blog''')
         for row in rows:
@@ -277,6 +315,7 @@ def get_db(err=True) -> tuple[sqlite3.Connection, sqlite3.Cursor]:
         if err:
             print("  * Error - Database doesn't exist or bad data. Run setup.py to fix")
             exit()
+
     return con, cur
 
 
@@ -293,15 +332,15 @@ def get_own_callsign():
 
 def set_settings(callsign: str, js8modem=False, js8host='127.0.0.1', js8port=2442, js8group="@BLOG",
                  aprsmodem=False, aprshost="127.0.0.1", aprsport=8001, aprs_ssid=9, tcpmodem=False, timezone='gmt',
-                 lat="", lon=""):
+                 lat="", lon="", js8auto=False):
     con, cur = get_db()
     cur.execute('''UPDATE settings 
                     SET callsign = ?, js8modem = ?, aprsmodem = ?, tcpmodem = ?, timezone = ?,
                         js8host = ?, js8port = ?, js8group = ?, 
-                        aprshost = ?, aprsport = ?, aprsssid = ?, lat = ?, lon = ?, tcplast = ? 
+                        aprshost = ?, aprsport = ?, aprsssid = ?, lat = ?, lon = ?, tcplast = ?, js8auto = ? 
                     WHERE id = ?;''',
                 (callsign, js8modem, aprsmodem, tcpmodem, timezone, js8host, js8port, js8group, aprshost,
-                 aprsport, aprs_ssid, lat, lon, 0, 0,))
+                 aprsport, aprs_ssid, lat, lon, 0, js8auto, 0,))
     con.commit()
     con.close()
 
@@ -328,7 +367,7 @@ def set_tcp_last():
 def get_settings():
     con, cur = get_db()  # js8host, js8port, js8group, aprshost, aprsport, aprsssid
     row = cur.execute('''SELECT callsign, js8modem, aprsmodem, tcpmodem, timezone, tcplast,
-                            js8host, js8port, js8group, aprshost, aprsport, aprsssid, lat, lon
+                            js8host, js8port, js8group, aprshost, aprsport, aprsssid, lat, lon, js8auto
                         FROM settings WHERE (id = ?)''', (0,))
     s = {}
     for r in row:
@@ -347,9 +386,28 @@ def get_settings():
         s['aprsssid'] = r[11]
         s['lat'] = r[12]
         s['lon'] = r[13]
+        s['js8auto'] = r[14]
     con.close()
     return s
 
 
+def check_db():
+    tables = table_data.keys()
+    con, cur = get_db()
+    for t in tables:
+        cols = table_data[t].keys()
+        rows = cur.execute("""PRAGMA table_info({})""".format(t))
+        c = []
+        for r in rows:
+            c.append(r[1])
+        for col in cols:
+            if col not in c:
+                cur.execute('ALTER TABLE {} ADD COLUMN {} {};'.format(t, col, table_data[t][col][1]))
+                cur.execute('UPDATE {} SET {} = ?;'.format(t, col), (table_data[t][col][0],))
+                print(f'created {col}')
+    con.commit()
+    con.close()
+
+
 if __name__ == "__main__":
-    print(get_bloggers())
+    check_db()

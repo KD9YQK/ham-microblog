@@ -58,12 +58,17 @@
             <input type="radio" name="timezone" value="local" checked>Local<br><br>
         {% endif %}
 
-
         <label>JS8Call: </label>
         {% if settings['js8modem'] %}
         <input type="checkbox" name="js8modem" checked><br>
         {% else %}
         <input type="checkbox" name="js8modem" ><br>
+        {% endif %}
+        <label>Auto Offset: </label>
+        {% if settings['js8auto'] %}
+        <input type="checkbox" name="js8auto" checked><br>
+        {% else %}
+        <input type="checkbox" name="js8auto"><br>
         {% endif %}
         <label>Host IP: </label>
         <input type="text" name="js8host" value="{{ settings['js8host'] }}"><br>

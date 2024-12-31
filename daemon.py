@@ -211,17 +211,20 @@ async def setting():
         js8En = False
         aprsEn = False
         tcpEn = False
+        js8auto = False
         if 'js8modem' in data.keys():
             js8En = True
         if 'aprsmodem' in data.keys():
             aprsEn = True
         if 'tcpmodem' in data.keys():
             tcpEn = True
+        if 'js8auto' in data.keys():
+            js8auto = True
         db_functions.set_settings(callsign=data['callsign'].upper(), js8modem=js8En, js8host=data['js8host'],
                                   js8port=int(data['js8port']), js8group=data['js8group'], aprsmodem=aprsEn,
                                   aprshost=data['aprshost'], aprsport=int(data['aprsport']),
                                   aprs_ssid=int(data['aprsssid']), tcpmodem=tcpEn, timezone=data['timezone'].lower(),
-                                  lat=data['lat'], lon=data['lon'])
+                                  lat=data['lat'], lon=data['lon'], js8auto=js8auto)
         settings = db_functions.get_settings()
         daemon.settings = settings
         _loop = asyncio.get_event_loop()

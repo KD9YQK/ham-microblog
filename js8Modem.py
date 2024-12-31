@@ -79,6 +79,8 @@ class JS8modem:
         self.js8call.start()
         print(f"  * JS8 - Connected ({self.HOST}, {self.PORT})")
         self.js8call.inbox.enable()
+        if not self.settings['js8auto']:
+            self.js8call.offset.disable()
         with open('tmp/js8.spots', 'wb') as f:
             pickle.dump({self.js8call.settings.get_station_callsign(True): {'hear_blog': [], 'hear_not': [],
                                                                             'heard_blog': [], 'heard_not': [],

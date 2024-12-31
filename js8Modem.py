@@ -179,7 +179,7 @@ class JS8modem:
             return
         prefix = f'{Command.POST}'
         if len(cut) == 2:
-            prefix += f'{blog[0]["callsign"]} '
+            prefix += f' {blog[0]["callsign"]} '
         message = f"{prefix} {num_to_abc(blog[0]['time'])} {blog[0]['msg']}"
 
         # respond to origin station with directed message

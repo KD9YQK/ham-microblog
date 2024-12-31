@@ -148,7 +148,7 @@ if __name__ == '__main__':
     print('#  MMBR TCP/IP Server')
     print('#  Bob KD9YQK - http://www.kd9yqk.com/')
     print('#########################################')
-    if not os.path.exists('mmgr.db'):
+    if not os.path.exists('mmbr.db'):
         db_functions.build_db()
         print('Database created')
 

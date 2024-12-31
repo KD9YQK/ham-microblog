@@ -16,7 +16,7 @@ class Radio:
     LON = "4145.  N"
     LAT = "08818.  W"
     SYMBOL = "/l"
-    COMMENT = 'Ham-Microblog Client https://kd9yqk.com/mmbr/index.php'
+    COMMENT = 'MMBR Client https://kd9yqk.com/mmbr/index.php'
 
     KISS_HOST: str
     KISS_PORT: str

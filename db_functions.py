@@ -298,10 +298,10 @@ def set_settings(callsign: str, js8modem=False, js8host='127.0.0.1', js8port=244
     cur.execute('''UPDATE settings 
                     SET callsign = ?, js8modem = ?, aprsmodem = ?, tcpmodem = ?, timezone = ?,
                         js8host = ?, js8port = ?, js8group = ?, 
-                        aprshost = ?, aprsport = ?, aprsssid = ?, lat = ?, lon = ? 
+                        aprshost = ?, aprsport = ?, aprsssid = ?, lat = ?, lon = ?, tcplast = ? 
                     WHERE id = ?;''',
                 (callsign, js8modem, aprsmodem, tcpmodem, timezone, js8host, js8port, js8group, aprshost,
-                 aprsport, aprs_ssid, lat, lon, 0,))
+                 aprsport, aprs_ssid, lat, lon, 0, 0,))
     con.commit()
     con.close()
 

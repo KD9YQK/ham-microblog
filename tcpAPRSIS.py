@@ -58,7 +58,7 @@ class APRSIS:
     LON = "07400.22W"
     #LON = "08818.  W"
     SYMBOL = "/?"
-    COMMENT = 'Ham-Microblog Server https://github.com/KD9YQK/ham-microblog'
+    COMMENT = 'MMBR Server https://kd9yqk.com/mmbr/index.php'
 
     tx_buffer = []
     tx_en = True

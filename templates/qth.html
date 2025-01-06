@@ -13,11 +13,21 @@
 
         <div class="post-feed" style="background-color:#8d9db6;"><p>
             <form method="post" id="addpost-form" action="/qth">
-                <input type="text" name="newmsg" id="addpost" style="width:100%; padding-bottom: 100px;" placeholder="Write a new post.."><br>
+            <textarea name="newmsg" id="addpost" placeholder="Write a new post.."></textarea><br>
                 <button type="submit" style="float: right; margin-top:8px;">Create</button>
             </form>
         </div>
     </div>
+
+<script type="text/javascript">
+    $("#addpost").keypress(function() {
+        if(event.which == 13 && !event.shiftKey)
+        {
+            document.getElementById("addpost-form").submit();
+            return false;
+        }
+    });
+</script>
 
 {% for post in blog %}
 

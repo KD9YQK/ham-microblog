@@ -7,7 +7,7 @@ expire = day * 30
 
 table_data = {
     'settings': {
-        'id': 0,
+        'id': [0, 'INT'],
         'callsign': ['MYCALL', 'VARCHAR(25)'],
         'js8modem': [False, 'BOOL'],
         'aprsmodem': [False, 'BOOL'],
@@ -32,7 +32,8 @@ def get_time():
 
 
 def build_db():
-    con, cur = get_db(err=False)
+    con = sqlite3.connect("mmbr.db")
+    cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS blog")
     cur.execute("DROP TABLE IF EXISTS monitoring")
     cur.execute("DROP TABLE IF EXISTS settings")
@@ -72,7 +73,7 @@ def build_db():
     cur.execute(table)
     cur.execute(''' INSERT INTO settings ( id, callsign, js8modem, aprsmodem, tcpmodem, timezone, tcplast, 
                         js8host, js8port, js8group, aprshost, aprsport, aprsssid, lat, lon, js8auto)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
                 (0, 'MYCALL', False, False, False, 'gmt', 0, '127.0.0.1', 2442, '@BLOG', '127.0.0.1', 8001, 9,
                  "4145.00N", "08818.00W", False,))
     con.commit()
